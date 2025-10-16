@@ -192,8 +192,8 @@
             <!-- Key Capabilities Header -->
             <h2 class="text-center text-3xl font-bold mb-8 text-white text-neon-glow" data-i18n="capabilities_header">Key Capabilities</h2>
 
-            <!-- New LLM Features Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <!-- New LLM Features Row (Now 6 items, organized in 2 rows on desktop) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                 <!-- LLM Feature 1: Emotional Tone Detector -->
                 <div onclick="switchView('tone-detector-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-pink-600/50">
                     <h3 class="text-2xl font-bold mb-2 text-pink-500" data-i18n="cap_tone_title">Emotional Tone Detector ✨</h3>
@@ -208,6 +208,21 @@
                  <div onclick="switchView('query-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-purple-500/50">
                     <h3 class="text-2xl font-bold mb-2 text-purple-500" data-i18n="query_mode_review">Code Review ✨</h3>
                     <p class="text-sm opacity-80" data-i18n="cap_review_desc">Use structured AI to assess code quality, identify errors, and suggest improvements.</p>
+                </div>
+                <!-- LLM Feature 4: Content Rewriter -->
+                <div onclick="switchView('rewriter-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-fuchsia-500/50">
+                    <h3 class="text-2xl font-bold mb-2 text-fuchsia-500" data-i18n="cap_rewriter_title">Content Rewriter ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_rewriter_desc">Transform text tone and style (e.g., casual to academic, or add a cyberpunk flair) while preserving meaning.</p>
+                </div>
+                 <!-- LLM Feature 5: Key Extractor -->
+                 <div onclick="switchView('key-extractor-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-orange-500/50">
+                    <h3 class="text-2xl font-bold mb-2 text-orange-500" data-i18n="key_extractor_title">Key Info Extractor ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="key_extractor_desc">Instantly distill long documents or transcripts into a summary, key topics, and action items.</p>
+                </div>
+                 <!-- LLM Feature 6: Data Validator (NEW) -->
+                 <div onclick="switchView('data-validator-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-lime-500/50">
+                    <h3 class="text-2xl font-bold mb-2 text-lime-500" data-i18n="data_validator_title">Data Validator & Formatter ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="data_validator_desc">Clean, validate, and structure messy or unstructured contact and product data into reliable JSON.</p>
                 </div>
             </div>
 
@@ -377,6 +392,95 @@
                     <p class="text-white/60 text-center" id="translator-status" data-i18n="translate_waiting">Awaiting Text Input...</p>
                     <div id="translator-output" class="prose prose-invert max-w-none text-white mt-4">
                         <!-- Translation results will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 6: Content Rewriter View (NEW) -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="rewriter-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-fuchsia-500 text-neon-glow" data-i18n="rewrite_header">TEXT STYLE MATRIX REWRITER ✨</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="rewrite_prompt">Enter text and select a style matrix to rewrite its tone:</p>
+                <form onsubmit="handleRewriter(event)" id="rewriter-form">
+                    <!-- Style Selector -->
+                    <div class="mb-4 flex items-center space-x-4">
+                        <label for="rewrite-style" class="text-white/80" data-i18n="rewrite_style_label">Target Style:</label>
+                        <select id="rewrite-style" class="bg-black text-white border border-fuchsia-500/50 rounded-md p-2 focus:ring-0 focus:border-fuchsia-500">
+                            <option value="Formal and Academic">Formal and Academic</option>
+                            <option value="Casual and Conversational">Casual and Conversational</option>
+                            <option value="Aggressive Cyberpunk">Aggressive Cyberpunk</option>
+                            <option value="Sarcastic and Witty">Sarcastic and Witty</option>
+                        </select>
+                    </div>
+
+                    <textarea id="rewriter-input" required rows="4" class="w-full p-3 mb-4 rounded-md bg-black border border-fuchsia-500/50 text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-500" placeholder="e.g., I'm super excited about the launch next week, we should all celebrate!" data-i18n-placeholder="rewrite_placeholder"></textarea>
+                    <button type="submit" class="glow-button w-full bg-fuchsia-600/70 text-white font-bold py-3 rounded-md hover:bg-fuchsia-600 transition duration-300" data-i18n="rewrite_submit">REWRITE TEXT</button>
+                </form>
+
+                <div id="rewriter-output-container" class="mt-8 pt-4 border-t border-fuchsia-500/50">
+                    <p class="text-white/60 text-center" id="rewriter-status" data-i18n="rewrite_waiting">Awaiting Text Input...</p>
+                    <div id="rewriter-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- Rewritten text will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 7: Key Extractor View (NEW) -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="key-extractor-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-orange-500 text-neon-glow" data-i18n="key_extractor_header">KEY INFORMATION EXTRACTOR ✨</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="key_extractor_prompt">Paste a long document, transcript, or meeting notes below for automatic summary and action item extraction:</p>
+                <form onsubmit="handleKeyExtraction(event)" id="extractor-form">
+                    <textarea id="extractor-input" required rows="8" class="w-full p-3 mb-4 rounded-md bg-black border border-orange-500/50 text-white focus:outline-none focus:ring-2 focus:ring-orange-500" placeholder="Paste your document content here (e.g., a long email, meeting transcript, or report draft)." data-i18n-placeholder="key_extractor_placeholder"></textarea>
+                    <button type="submit" class="glow-button w-full bg-orange-600/70 text-white font-bold py-3 rounded-md hover:bg-orange-600 transition duration-300" data-i18n="key_extractor_submit">EXTRACT KEY INFO & ACTIONS</button>
+                </form>
+
+                <div id="extractor-output-container" class="mt-8 pt-4 border-t border-orange-500/50">
+                    <p class="text-white/60 text-center" id="extractor-status" data-i18n="key_extractor_waiting">Awaiting Document Input...</p>
+                    <div id="extractor-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- Extracted results will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 8: Data Validator View (NEW) -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="data-validator-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-lime-500 text-neon-glow" data-i18n="data_validator_header">DATA VALIDATOR & FORMATTER ✨</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="data_validator_prompt">Paste messy, unstructured data. The AI will extract and structure it into a clean JSON array:</p>
+                <form onsubmit="handleDataValidation(event)" id="validator-form">
+                    <!-- Data Schema Selector -->
+                    <div class="mb-4 flex items-center space-x-4">
+                        <label for="data-schema" class="text-white/80" data-i18n="data_validator_schema_label">Target Schema:</label>
+                        <select id="data-schema" class="bg-black text-white border border-lime-500/50 rounded-md p-2 focus:ring-0 focus:border-lime-500">
+                            <option value="contact">Contact List (Name, Email, Phone)</option>
+                            <option value="product">Product List (Name, Price, Category)</option>
+                        </select>
+                    </div>
+
+                    <textarea id="validator-input" required rows="6" class="w-full p-3 mb-4 rounded-md bg-black border border-lime-500/50 text-white focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="e.g., John Smith, call me at 555-1234, email john@corp.com. Next is Alice: alice@home.net, no phone given." data-i18n-placeholder="data_validator_placeholder"></textarea>
+                    <button type="submit" class="glow-button w-full bg-lime-600/70 text-black font-bold py-3 rounded-md hover:bg-lime-600 transition duration-300" data-i18n="data_validator_submit">CLEAN & VALIDATE DATA</button>
+                </form>
+
+                <div id="validator-output-container" class="mt-8 pt-4 border-t border-lime-500/50">
+                    <p class="text-white/60 text-center" id="validator-status" data-i18n="data_validator_waiting">Awaiting Unstructured Data...</p>
+                    <div id="validator-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- Formatted JSON output will go here -->
                     </div>
                 </div>
             </div>
@@ -674,6 +778,16 @@
                 cap_translate_title: "Chat Translator ✨",
                 cap_translate_desc: "Get fast, nuanced, and context-aware translations for informal and conversational text.",
                 cap_review_desc: "Use structured AI to assess code quality, identify errors, and suggest improvements.",
+                cap_rewriter_title: "Content Rewriter ✨",
+                cap_rewriter_desc: "Transform text tone and style (e.g., casual to academic, or add a cyberpunk flair) while preserving meaning.",
+                key_extractor_title: "Key Info Extractor ✨", // NEW
+                key_extractor_desc: "Instantly distill long documents or transcripts into a summary, key topics, and action items.", // NEW
+                data_validator_title: "Data Validator & Formatter ✨", // NEW
+                data_validator_desc: "Clean, validate, and structure messy or unstructured contact and product data into reliable JSON.", // NEW
+                data_validator_schema_label: "Target Schema:", // NEW
+                data_validator_placeholder: "e.g., John Smith, call me at 555-1234, email john@corp.com. Next is Alice: alice@home.net, no phone given.", // NEW
+                data_validator_submit: "CLEAN & VALIDATE DATA", // NEW
+                data_validator_waiting: "Awaiting Unstructured Data...", // NEW
                 cap_voice_title: "Real-Time Voice",
                 cap_voice_desc: "Engage in fully natural conversations, seamlessly looking for answers or acting like a human.",
                 cap_lang_title: "Multi-Language",
@@ -721,6 +835,19 @@
                 translate_submit: "TRANSLATE TEXT",
                 translate_waiting: "Awaiting Text Input...",
 
+                rewrite_header: "TEXT STYLE MATRIX REWRITER ✨",
+                rewrite_prompt: "Enter text and select a style matrix to rewrite its tone:",
+                rewrite_style_label: "Target Style:",
+                rewrite_placeholder: "e.g., I'm super excited about the launch next week, we should all celebrate!",
+                rewrite_submit: "REWRITE TEXT",
+                rewrite_waiting: "Awaiting Text Input...",
+
+                key_extractor_header: "KEY INFORMATION EXTRACTOR ✨", // NEW
+                key_extractor_prompt: "Paste a long document, transcript, or meeting notes below for automatic summary and action item extraction:", // NEW
+                key_extractor_placeholder: "Paste your document content here (e.g., a long email, meeting transcript, or report draft).", // NEW
+                key_extractor_submit: "EXTRACT KEY INFO & ACTIONS", // NEW
+                key_extractor_waiting: "Awaiting Document Input...", // NEW
+
 
                 // SETTINGS
                 settings_title: "SYSTEM SETTINGS",
@@ -761,6 +888,16 @@
                 cap_translate_title: "चैट अनुवादक ✨",
                 cap_translate_desc: "अनौपचारिक और संवादात्मक पाठ के लिए तेज़, सूक्ष्म और संदर्भ-जागरूक अनुवाद प्राप्त करें।",
                 cap_review_desc: "कोड की गुणवत्ता का आकलन करने, त्रुटियों की पहचान करने और सुधार सुझाने के लिए संरचित एआई का उपयोग करें।",
+                cap_rewriter_title: "सामग्री पुनर्रचना ✨",
+                cap_rewriter_desc: "मूल अर्थ को बनाए रखते हुए पाठ टोन और शैली (जैसे आकस्मिक से अकादमिक, या साइबरपंक फ्लेयर जोड़ें) को बदलें।",
+                key_extractor_title: "मुख्य जानकारी निष्कर्षण ✨", // NEW
+                key_extractor_desc: "लंबे दस्तावेज़ों या प्रतिलेखों को सारांश, मुख्य विषयों और कार्रवाई वस्तुओं में तुरंत आसवित करें।", // NEW
+                data_validator_title: "डेटा सत्यापनकर्ता और प्रारूपक ✨", // NEW
+                data_validator_desc: "गन्दा या असंरचित संपर्क और उत्पाद डेटा को विश्वसनीय JSON में साफ, मान्य और संरचित करें।", // NEW
+                data_validator_schema_label: "लक्ष्य योजना:", // NEW
+                data_validator_placeholder: "उदाहरण: जॉन स्मिथ, मुझे 555-1234 पर कॉल करें, ईमेल john@corp.com। अगला एलिस है: alice@home.net, कोई फोन नहीं दिया गया।", // NEW
+                data_validator_submit: "डेटा साफ़ करें और मान्य करें", // NEW
+                data_validator_waiting: "असंरचित डेटा की प्रतीक्षा है...", // NEW
                 cap_voice_title: "रीयल-टाइम वॉयस",
                 cap_voice_desc: "पूरी तरह से प्राकृतिक बातचीत में शामिल हों, सहजता से उत्तर खोजें या मानव की तरह कार्य करें।",
                 cap_lang_title: "बहु-भाषा",
@@ -807,6 +944,20 @@
                 translate_submit: "पाठ का अनुवाद करें",
                 translate_waiting: "पाठ इनपुट की प्रतीक्षा है...",
 
+                rewrite_header: "पाठ शैली मैट्रिक्स पुनर्रचना ✨",
+                rewrite_prompt: "पाठ दर्ज करें और इसके टोन को फिर से लिखने के लिए एक शैली मैट्रिक्स का चयन करें:",
+                rewrite_style_label: "लक्ष्य शैली:",
+                rewrite_placeholder: "उदाहरण: मैं अगले सप्ताह लॉन्च के बारे में बहुत उत्साहित हूँ, हमें सभी को जश्न मनाना चाहिए!",
+                rewrite_submit: "पाठ को फिर से लिखें",
+                rewrite_waiting: "पाठ इनपुट की प्रतीक्षा है...",
+
+                key_extractor_header: "मुख्य जानकारी निष्कर्षण ✨", // NEW
+                key_extractor_prompt: "स्वचालित सारांश और कार्रवाई आइटम निष्कर्षण के लिए नीचे एक लंबा दस्तावेज़, प्रतिलेख, या मीटिंग नोट्स पेस्ट करें:", // NEW
+                key_extractor_placeholder: "यहां अपनी दस्तावेज़ सामग्री पेस्ट करें (उदाहरण: एक लंबा ईमेल, मीटिंग प्रतिलेख, या रिपोर्ट ड्राफ्ट)।", // NEW
+                key_extractor_submit: "मुख्य जानकारी और कार्य निकालें", // NEW
+                key_extractor_waiting: "दस्तावेज़ इनपुट की प्रतीक्षा है...", // NEW
+
+
                 // SETTINGS
                 settings_title: "सिस्टम सेटिंग्स",
                 settings_source_code: "एचटीएमएल सोर्स कोड उपयोगिता",
@@ -823,7 +974,7 @@
                 
                 // NEW HERO CONTENT
                 hero_title: "AIతో మాట్లాడండి. తక్షణ, ప్రపంచ, వాయిస్-ఎనేబుల్డ్.",
-                hero_subtitle: "మా మల్టీమోడల్, వాయిస్-శక్తి గల ఏజెంట్‌తో ఇంటరాక్షన్ యొక్క భవిష్యత్తును అనుభవించండి. సంభాషణను ప్రారంభించడానికి పై మూలలో ఉన్న మైక్రోఫోన్ బటన్‌ను క్లిక్ చేయండి.",
+                hero_subtitle: "మా మల్టీమోడల్, వాయిస్-శక్తి గల ఏజెంట్‌తో ఇంటరాక్షన్ యొక్క భవిష్యత్తును అనుభవించండి. సంభాషణను ప్రారంభించడానికి పై మూలలో ఉన్న మైక్రోఫోన్ బటన్‌ను క్లిక్ చేయండి。",
                 btn_toggle: "ఫిక్స్‌డ్ AI టోగుల్‌ను ఉపయోగించండి",
                 btn_brainstorm: "AI బ్రెయిన్‌స్టార్మ్ ఆలోచనలు",
                 btn_multimodal: "మల్టీమోడల్ ప్రశ్న 🧬",
@@ -842,22 +993,32 @@
                 // NEW CAPABILITIES CONTENT
                 capabilities_header: "కీ సామర్థ్యాలు",
                 cap_tone_title: "భావోద్వేగ టోన్ డిటెక్టర్ ✨",
-                cap_tone_desc: "నిర్మాణాత్మక AI విశ్లేషణను ఉపయోగించి భావోద్వేగ కంటెంట్ (ఉదా. నిరాశ, ఉత్సాహం, ప్రశాంతత) కోసం వచనాన్ని విశ్లేషించండి.",
+                cap_tone_desc: "నిర్మాణాత్మక AI విశ్లేషణను ఉపయోగించి భావోద్వేగ కంటెంట్ (ఉదా. నిరాశ, ఉత్సాహం, ప్రశాంతత) కోసం వచనాన్ని విశ్లేషించండి。",
                 cap_translate_title: "చాట్ ట్రాన్స్లేటర్ ✨",
-                cap_translate_desc: "అనధికారిక మరియు సంభాషణాత్మక వచనం కోసం వేగవంతమైన, సూక్ష్మమైన మరియు సందర్భ-అవగాహన అనువాదాలను పొందండి.",
-                cap_review_desc: "కోడ్ నాణ్యతను అంచనా వేయడానికి, లోపాలను గుర్తించడానికి మరియు మెరుగుదలలను సూచించడానికి నిర్మాణాత్మక AIని ఉపయోగించండి.",
+                cap_translate_desc: "అనధికారిక మరియు సంభాషణాత్మక వచనం కోసం వేగవంతమైన, సూక్ష్మమైన మరియు సందర్భ-అవగాహన అనువాదాలను పొందండి。",
+                cap_review_desc: "కోడ్ నాణ్యతను అంచనా వేయడానికి, లోపాలను గుర్తించడానికి మరియు మెరుగుదలలను సూచించడానికి నిర్మాణాత్మక AIని ఉపయోగించండి。",
+                cap_rewriter_title: "కంటెంట్ రీరైటర్ ✨",
+                cap_rewriter_desc: "కోర్ అర్థాన్ని కాపాడుతూ టెక్స్ట్ టోన్ మరియు స్టైల్‌ను (ఉదా., సాధారణం నుండి అకడమిక్‌కు, లేదా సైబర్‌పంక్ ఫ్లెయిర్‌ను జోడించండి) మార్చండి。",
+                key_extractor_title: "కీ సమాచారం ఎక్స్‌ట్రాక్టర్ ✨", // NEW
+                key_extractor_desc: "పొడవైన పత్రాలు లేదా ట్రాన్స్క్రిప్ట్‌లను సారాంశం, ముఖ్య అంశాలు మరియు చర్య అంశాలుగా తక్షణమే సంగ్రహించండి。", // NEW
+                data_validator_title: "డేటా వాలిడేటర్ & ఫార్మాటర్ ✨", // NEW
+                data_validator_desc: "గజిబిజిగా ఉన్న లేదా నిర్మాణ రహిత కాంటాక్ట్ మరియు ప్రొడక్ట్ డేటాను విశ్వసనీయమైన JSON లోకి శుభ్రపరచండి, ధృవీకరించండి మరియు నిర్మించండి。", // NEW
+                data_validator_schema_label: "టార్గెట్ స్కీమా:", // NEW
+                data_validator_placeholder: "ఉదా. జాన్ స్మిత్, 555-1234 వద్ద నాకు కాల్ చేయండి, email john@corp.com. తర్వాత ఆలిస్: alice@home.net, ఫోన్ నంబర్ ఇవ్వలేదు。", // NEW
+                data_validator_submit: "డేటాను శుభ్రపరచండి & ధృవీకరించండి", // NEW
+                data_validator_waiting: "నిర్మాణ రహిత డేటా కోసం వేచి ఉంది...", // NEW
                 cap_voice_title: "రియల్-టైమ్ వాయిస్",
-                cap_voice_desc: "పూర్తిగా సహజమైన సంభాషణలలో పాల్గొనండి, సజావుగా సమాధానాల కోసం వెతకండి లేదా మనిషిలా వ్యవహరించండి.",
+                cap_voice_desc: "పూర్తిగా సహజమైన సంభాషణలలో పాల్గొనండి, సజావుగా సమాధానాల కోసం వెతకండి లేదా మనిషిలా వ్యవహరించండి。",
                 cap_lang_title: "బహుళ భాష",
-                cap_lang_desc: "బహుళ ప్రపంచ భాషలకు మద్దతు ఇస్తుంది, నిజమైన బహుభాషా కమ్యూనికేషన్‌ను ప్రారంభిస్తుంది.",
+                cap_lang_desc: "బహుళ ప్రపంచ భాషలకు మద్దతు ఇస్తుంది, నిజమైన బహుభాషా కమ్యూనికేషన్‌ను ప్రారంభిస్తుంది。",
                 cap_modes_title: "వాయిస్ + చాట్ మోడ్‌లు",
-                cap_modes_desc: "ఒకే ఇంటర్‌ఫేస్‌లో వాయిస్ ఇన్‌పుట్ మరియు టెక్స్ట్ చాట్ మధ్య తక్షణమే మారండి.",
+                cap_modes_desc: "ఒకే ఇంటర్‌ఫేస్‌లో వాయిస్ ఇన్‌పుట్ మరియు టెక్స్ట్ చాట్ మధ్య తక్షణమే మారండి。",
                 cap_transcript_title: "లైవ్ ట్రాన్స్‌క్రిప్ట్",
-                cap_transcript_desc: "స్పష్టత మరియు రికార్డు ఉంచడం కోసం మీ సంభాషణ యొక్క నిజ-సమయ ట్రాన్స్‌క్రిప్ట్‌ను వీక్షించండి.",
+                cap_transcript_desc: "స్పష్టత మరియు రికార్డు ఉంచడం కోసం మీ సంభాషణ యొక్క నిజ-సమయ ట్రాన్స్‌క్రిప్ట్‌ను వీక్షించండి。",
                 cap_design_title: "భవిష్యత్ డిజైన్",
-                cap_design_desc: "నియాన్ గ్లోస్, హైలైట్‌లు మరియు మృదువైన యానిమేషన్‌లతో సొగసైన, డార్క్ సైబర్‌పంక్ UIని ఆస్వాదించండి.",
+                cap_design_desc: "నియాన్ గ్లోస్, హైలైట్‌లు మరియు మృదువైన యానిమేషన్‌లతో సొగసైన, డార్క్ సైబర్‌పంక్ UIని ఆస్వాదించండి。",
                 cap_responsive_title: "పూర్తిగా ప్రతిస్పందించే",
-                cap_responsive_desc: "మొబైల్ నుండి డెస్క్‌టాప్ వరకు, అన్ని పరికరాల్లో దోషరహిత వీక్షణ మరియు ఇంటరాక్షన్ కోసం ఆప్టిమైజ్ చేయబడింది.",
+                cap_responsive_desc: "మొబైల్ నుండి డెస్క్‌టాప్ వరకు, అన్ని పరికరాల్లో దోషరహిత వీక్షణ మరియు ఇంటరాక్షన్ కోసం ఆప్టిమైజ్ చేయబడింది。",
                 
                 // FEATURE VIEWS
                 btn_home: "← హబ్‌కు తిరిగి వెళ్లండి",
@@ -872,7 +1033,7 @@
                 query_mode_general: "సాధారణ విశ్లేషణ",
                 query_mode_code: "కోడ్ స్నిప్పెట్",
                 query_mode_review: "కోడ్ రివ్యూ ✨",
-                query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి)।",
+                query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి)。",
                 query_image_label: "చిత్రాన్ని అప్‌లోడ్ చేయండి (మల్టీమోడల్ విశ్లేషణ కోసం ఐచ్ఛికం):",
                 query_submit: "ఆదేశాన్ని అమలు చేయండి",
                 query_waiting: "ఆదేశం అమలు కోసం వేచి ఉంది...",
@@ -881,22 +1042,35 @@
 
                 tone_header: "భావోద్వేగ టోన్ డిటెక్టర్ ✨",
                 tone_prompt: "దీని ప్రధాన భావోద్వేగ స్వరాన్ని విశ్లేషించడానికి సందేశం, ఇమెయిల్ లేదా సాధారణ వాక్యాన్ని నమోదు చేయండి:",
-                tone_placeholder: "ఉదా: సర్వర్ అంతరాయంపై నేను చాలా నిరాశకు గురయ్యాను మరియు వెంటనే పరిష్కారం కావాలి.",
+                tone_placeholder: "ఉదా: సర్వర్ అంతరాయంపై నేను చాలా నిరాశకు గురయ్యాను మరియు వెంటనే పరిష్కారం కావాలి。",
                 tone_submit: "టోన్‌ను విశ్లేషించండి",
                 tone_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది...",
 
                 translate_header: "చాట్ ట్రాన్స్లేటర్ ✨",
                 translate_prompt: "సూక్ష్మ అనువాదం కోసం సంభాషణాత్మక వచనాన్ని నమోదు చేసి, లక్ష్య భాషను ఎంచుకోండి:",
                 translate_target_label: "లక్ష్య భాష:",
-                translate_placeholder: "ఉదా: హే మనిషి, సర్వర్ విస్తరణ షెడ్యూల్ గురించి మెమో చూసావా? శుక్రవారం లోపు పూర్తి చేయకపోతే మనం పూర్తిగా చిక్కుకుపోతాము.",
+                translate_placeholder: "ఉదా: హే మనిషి, సర్వర్ విస్తరణ షెడ్యూల్ గురించి మెమో చూసావా? శుక్రవారం లోపు పూర్తి చేయకపోతే మనం పూర్తిగా చిక్కుకుపోతాము。",
                 translate_submit: "వచనాన్ని అనువదించండి",
-                translate_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది...",
+                translate_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది。",
+
+                rewrite_header: "టెక్స్ట్ స్టైల్ మ్యాట్రిక్స్ రీరైటర్ ✨",
+                rewrite_prompt: "వచనాన్ని నమోదు చేయండి మరియు దాని స్వరాన్ని తిరిగి రాయడానికి ఒక శైలి మాతృకను ఎంచుకోండి:",
+                rewrite_style_label: "లక్ష్య శైలి:",
+                rewrite_placeholder: "ఉదా: వచ్చే వారం లాంచ్ గురించి నేను చాలా ఉత్సాహంగా ఉన్నాను, మనం అందరం వేడుక చేసుకోవాలి!",
+                rewrite_submit: "వచనాన్ని తిరిగి రాయండి",
+                rewrite_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది...",
+
+                key_extractor_header: "కీ సమాచారం ఎక్స్‌ట్రాక్టర్ ✨", // NEW
+                key_extractor_prompt: "స్వయంచాలక సారాంశం మరియు చర్య అంశాల సంగ్రహణ కోసం కింద పొడవైన పత్రం, ట్రాన్స్క్రిప్ట్ లేదా సమావేశ గమనికలను అతికించండి:", // NEW
+                key_extractor_placeholder: "ఇక్కడ మీ పత్రం కంటెంట్‌ను అతికించండి (ఉదా. ఒక పొడవైన ఇమెయిల్, సమావేశ ట్రాన్స్క్రిప్ట్ లేదా నివేదిక డ్రాఫ్ట్)。", // NEW
+                key_extractor_submit: "కీ సమాచారం & చర్యలను సంగ్రహించండి", // NEW
+                key_extractor_waiting: "పత్రం ఇన్‌పుట్ కోసం వేచి ఉంది...", // NEW
 
 
                 // SETTINGS
                 settings_title: "సిస్టమ్ సెట్టింగ్‌లు",
                 settings_source_code: "HTML సోర్స్ కోడ్ యుటిలిటీ",
-                settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి।",
+                settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి。",
                 settings_copy_btn: "HTML సోర్స్‌ను క్లిప్‌బోర్డ్‌కు కాపీ చేయండి",
                 settings_download_btn: "వెబ్‌సైట్ ఫైల్‌ను డౌన్‌లోడ్ చేయండి",
                 settings_key_info: "API Key Information",
@@ -1240,7 +1414,7 @@
 
 
         // ----------------------------------------------------------------------------
-        // 8. LLM Feature: CHAT TRANSLATOR (View 5 - NEW)
+        // 8. LLM Feature: CHAT TRANSLATOR (View 5)
         // ----------------------------------------------------------------------------
         async function handleTranslation(event) {
             event.preventDefault();
@@ -1293,10 +1467,280 @@
                 outputDiv.innerHTML = `<p class="text-red-500">Processing Error.</p>`;
             }
         }
+        
+        // ----------------------------------------------------------------------------
+        // 9. LLM Feature: CONTENT REWRITER (View 6 - NEW)
+        // ----------------------------------------------------------------------------
+        async function handleRewriter(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('rewriter-input');
+            const styleElement = document.getElementById('rewrite-style');
+            const outputDiv = document.getElementById('rewriter-output');
+            const statusP = document.getElementById('rewriter-status');
+            
+            const sourceText = inputElement.value;
+            const targetStyle = styleElement.value;
+
+            if (!sourceText) return;
+
+            statusP.textContent = `Injecting new style matrix: ${targetStyle}...`;
+            outputDiv.innerHTML = '';
+            
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
+            const systemPrompt = `You are an expert textual style manipulator. Your task is to rewrite the user's input text to adopt a '${targetStyle}' style. Preserve the core facts and meaning, but entirely transform the tone, vocabulary, and sentence structure to match the requested style. Provide ONLY the rewritten text, without any introductory or concluding commentary.`;
+
+            const userQuery = `Rewrite the following text into the '${targetStyle}' style: "${sourceText}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (rawText) {
+                    outputDiv.innerHTML = `
+                        <h4 class="text-xl font-bold text-fuchsia-500">${targetStyle} Output:</h4>
+                        <p class="text-white/90 text-lg mt-2 p-3 bg-black/50 border border-fuchsia-500/30 rounded-lg">${rawText.trim()}</p>
+                    `;
+                    statusP.textContent = 'Style Injection Complete.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Rewriter API Error:", error);
+                statusP.textContent = `[ERROR]: Rewrite Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error.</p>`;
+            }
+        }
+        
+        // ----------------------------------------------------------------------------
+        // 10. LLM Feature: KEY EXTRACTOR (View 7 - NEW)
+        // ----------------------------------------------------------------------------
+        async function handleKeyExtraction(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('extractor-input');
+            const outputDiv = document.getElementById('extractor-output');
+            const statusP = document.getElementById('extractor-status');
+            
+            const sourceText = inputElement.value;
+
+            if (!sourceText) return;
+
+            statusP.textContent = `Analyzing document structure and extracting key entities...`;
+            outputDiv.innerHTML = '';
+            
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
+            const systemPrompt = `You are an expert document summarization and key information extraction engine. Analyze the provided text (which may be a meeting transcript or a long document) and extract the following: 1) A concise summary (2-3 sentences). 2) A bulleted list of the most important topics/keywords discussed. 3) A bulleted list of clear action items with owners or timelines, if applicable. Respond ONLY with a valid JSON object that strictly follows the provided schema.`;
+
+            const userQuery = `Analyze the following text and extract the key information: "${sourceText}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            summary: { type: "STRING", description: "A concise summary of the entire text (2-3 sentences)." },
+                            key_topics: { type: "ARRAY", items: { type: "STRING" }, description: "A list of the main topics or keywords found." },
+                            action_items: { type: "ARRAY", items: { type: "STRING" }, description: "A list of actionable steps or next steps required." }
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const extractedData = JSON.parse(jsonText);
+                    let html = `<h3 class="text-3xl font-bold mb-4 text-orange-500">Extraction Complete</h3>`;
+                    
+                    // Summary
+                    html += `<h4 class="text-xl font-bold mt-4 text-white">Summary</h4>`;
+                    html += `<p class="text-white/80 p-3 bg-black/50 border border-orange-500/30 rounded-lg">${extractedData.summary}</p>`;
+                    
+                    // Key Topics
+                    html += `<h4 class="text-xl font-bold mt-6 text-white">Key Topics</h4>`;
+                    html += `<ul class="list-disc pl-5 text-orange-400 space-y-1">`;
+                    extractedData.key_topics.forEach(topic => {
+                        html += `<li>${topic}</li>`;
+                    });
+                    html += `</ul>`;
+
+                    // Action Items
+                    html += `<h4 class="text-xl font-bold mt-6 text-white">Action Items</h4>`;
+                    html += `<ul class="list-disc pl-5 text-red-400 space-y-1">`;
+                    if (extractedData.action_items && extractedData.action_items.length > 0) {
+                        extractedData.action_items.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                    } else {
+                        html += `<li class="text-green-400">No explicit action items detected.</li>`;
+                    }
+                    html += `</ul>`;
+                    
+                    outputDiv.innerHTML = html;
+                    statusP.textContent = 'Extraction Successful. Data Displayed.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Extractor API Error:", error);
+                statusP.textContent = `[ERROR]: Extraction Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
+            }
+        }
+        
+        // ----------------------------------------------------------------------------
+        // 11. LLM Feature: DATA VALIDATOR (View 8 - NEW)
+        // ----------------------------------------------------------------------------
+        async function handleDataValidation(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('validator-input');
+            const schemaElement = document.getElementById('data-schema');
+            const outputDiv = document.getElementById('validator-output');
+            const statusP = document.getElementById('validator-status');
+            
+            const sourceText = inputElement.value;
+            const schemaType = schemaElement.value;
+
+            if (!sourceText) return;
+
+            statusP.textContent = `Validating and structuring data for '${schemaType}' schema...`;
+            outputDiv.innerHTML = '';
+            
+            let targetSchema;
+            let systemPrompt;
+
+            if (schemaType === 'contact') {
+                systemPrompt = "You are a contact data cleaning and structuring API. Extract all potential contacts from the messy input text. For each contact, identify their Full Name, Email Address, and Phone Number. If a field is missing, use an empty string. The output must be a JSON array of these contact objects, strictly following the provided schema.";
+                targetSchema = {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            full_name: { type: "STRING" },
+                            email: { type: "STRING" },
+                            phone: { type: "STRING" }
+                        },
+                        propertyOrdering: ["full_name", "email", "phone"]
+                    }
+                };
+            } else if (schemaType === 'product') {
+                systemPrompt = "You are a product catalog parser. Extract all product items from the text. For each item, identify its Product Name, Price (as a string, including currency), and Category. If a field is missing, use an empty string. The output must be a JSON array of these product objects, strictly following the provided schema.";
+                targetSchema = {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            product_name: { type: "STRING" },
+                            price: { type: "STRING" },
+                            category: { type: "STRING" }
+                        },
+                        propertyOrdering: ["product_name", "price", "category"]
+                    }
+                };
+            }
+
+            const userQuery = `Clean and structure the following data into a JSON array using the '${schemaType}' schema: "${sourceText}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: targetSchema
+                }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const parsedData = JSON.parse(jsonText);
+                    
+                    outputDiv.innerHTML = `
+                        <h4 class="text-xl font-bold text-lime-500 mb-2">Validated JSON Output:</h4>
+                        <pre class="bg-gray-900 p-4 rounded-md overflow-x-auto text-sm text-yellow-400"><code>${JSON.stringify(parsedData, null, 2)}</code></pre>
+                        <h4 class="text-xl font-bold mt-6 text-lime-500 mb-2">Structured Table View:</h4>
+                        ${generateHtmlTable(parsedData)}
+                    `;
+                    statusP.textContent = 'Data Validation Complete. Structured Data Displayed.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Data Validator API Error:", error);
+                statusP.textContent = `[ERROR]: Data Validation Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
+            }
+        }
+
+        function generateHtmlTable(data) {
+            if (!Array.isArray(data) || data.length === 0) return '<p class="text-white/70">No data records were successfully extracted.</p>';
+
+            const headers = Object.keys(data[0]);
+            let html = '<table class="w-full text-sm text-left text-white/90 border border-lime-500/50 rounded-lg overflow-hidden">';
+            
+            // Header Row
+            html += '<thead class="text-xs text-black uppercase bg-lime-500">';
+            html += '<tr>';
+            headers.forEach(header => {
+                html += `<th scope="col" class="px-6 py-3">${header.replace(/_/g, ' ').toUpperCase()}</th>`;
+            });
+            html += '</tr>';
+            html += '</thead>';
+
+            // Body Rows
+            html += '<tbody>';
+            data.forEach((row, index) => {
+                const bgColor = index % 2 === 0 ? 'bg-black/50' : 'bg-black/80';
+                html += `<tr class="${bgColor} border-b border-lime-500/30">`;
+                headers.forEach(header => {
+                    let value = row[header] || '-';
+                    // Highlight empty/missing fields
+                    const textColor = value === '-' || value === '' ? 'text-red-400 italic' : 'text-white';
+                    html += `<td class="px-6 py-4 ${textColor}">${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            html += '</table>';
+
+            return html;
+        }
 
 
         // ----------------------------------------------------------------------------
-        // 9. CORE UTILITIES (Markdown, TTS, Settings)
+        // 12. CORE UTILITIES (Markdown, TTS, Settings)
         // ----------------------------------------------------------------------------
 
         function markdownToHtml(markdown) {
