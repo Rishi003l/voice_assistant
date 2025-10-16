@@ -358,8 +358,8 @@
         consent-content="By clicking 'Agree,' and each time I interact with this AI agent, I consent to the recording, storage, and sharing of my communications with third-party service providers, and as otherwise described in our Terms of Service."
         consent-storage-key="vapi_widget_consent"
     ></vapi-widget>
-    <!-- VAPI Script -->
-    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" async type="text/javascript"></script>
+    <!-- VAPI Script: ASYNC REMOVED FOR FASTER INITIALIZATION -->
+    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" type="text/javascript"></script>
 
     <!-- Fixed VAPI Toggle Button -->
     <div id="vapi-toggle-fixed" onclick="toggleVapi()">
@@ -370,7 +370,7 @@
     <!-- JAVASCRIPT LOGIC -->
     <!-- ------------------------------------------------------------------------------------ -->
     <script>
-        const API_KEY = ""; // Placeholder, key is supplied by the canvas environment
+        const API_KEY = "AIzaSyBUa3I3oPt0K4kUxUbLMnFcN8kwIK5uUbg"; // Placeholder, key is supplied by the canvas environment
         const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
         // Global state for views
@@ -388,9 +388,12 @@
          * @returns {Promise<Response>}
          */
         async function exponentialBackoffFetch(url, options, retries = 3) {
+            // Include API Key in URL here to ensure it's passed correctly
+            const fetchUrl = url + `?key=${API_KEY}`;
+            
             for (let i = 0; i < retries; i++) {
                 try {
-                    const response = await fetch(url, options);
+                    const response = await fetch(fetchUrl, options);
                     if (response.status === 429) { // Rate limit
                         throw new Error(`Rate limit hit (429). Retrying in ${Math.pow(2, i)}s...`);
                     }
@@ -509,14 +512,15 @@
 
                 const checkWidget = () => {
                     const widget = document.querySelector(VAPI_TAG_NAME);
-                    if (widget) {
+                    // Check if widget is available AND has the .start method attached by the SDK
+                    if (widget && typeof widget.start === 'function') {
                         return resolve(widget);
                     }
                     elapsed += intervalTime;
                     if (elapsed < timeoutMs) {
                         setTimeout(checkWidget, intervalTime);
                     } else {
-                        console.error("VAPI widget not found within timeout.");
+                        console.error("VAPI widget not found or not fully initialized within timeout.");
                         resolve(null);
                     }
                 };
@@ -547,6 +551,8 @@
                     toggleIcon.classList.remove('text-black');
                     widget.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
                 }
+            } else {
+                console.error("Cannot toggle VAPI: Widget not initialized.");
             }
         }
 
@@ -680,7 +686,7 @@
                 settings_copy_btn: "एचटीएमएल सोर्स क्लिपबोर्ड पर कॉपी करें",
                 settings_download_btn: "वेबसाइट फ़ाइल डाउनलोड करें",
                 settings_key_info: "एपीआई कुंजी जानकारी",
-                settings_key_desc: "सभी एआई फ़ंक्शन **जेमिनी एपीआई** द्वारा संचालित हैं। कुंजी को कैनवास वातावरण द्वारा सुरक्षित रूप से संभाला जाता है।",
+                settings_key_desc: "All AI functions are powered by the **Gemini API**. The key is handled securely by the canvas environment.",
                 settings_close: "इंटरफ़ेस बंद करें"
             },
             te: {
@@ -731,7 +737,7 @@
                 query_mode_label: "మోడ్‌ను ఎంచుకోండి:",
                 query_mode_general: "సాధారణ విశ్లేషణ",
                 query_mode_code: "కోడ్ స్నిప్పెట్",
-                query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి).",
+                query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి)।",
                 query_image_label: "చిత్రాన్ని అప్‌లోడ్ చేయండి (మల్టీమోడల్ విశ్లేషణ కోసం ఐచ్ఛికం):",
                 query_submit: "ఆదేశాన్ని అమలు చేయండి",
                 query_waiting: "ఆదేశం అమలు కోసం వేచి ఉంది...",
@@ -739,12 +745,12 @@
                 query_citation_header: "గ్రౌండింగ్ మూలాలు:",
                 settings_title: "సిస్టమ్ సెట్టింగ్‌లు",
                 settings_source_code: "HTML సోర్స్ కోడ్ యుటిలిటీ",
-                settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి.",
+                settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి।",
                 settings_copy_btn: "HTML సోర్స్‌ను క్లిప్‌బోర్డ్‌కు కాపీ చేయండి",
                 settings_download_btn: "వెబ్‌సైట్ ఫైల్‌ను డౌన్‌లోడ్ చేయండి",
-                settings_key_info: "API కీ సమాచారం",
-                settings_key_desc: "అన్ని AI ఫంక్షన్‌లు **జెమిని API** ద్వారా శక్తివంతం చేయబడతాయి. కీని కాన్వాస్ పర్యావరణం ద్వారా సురక్షితంగా నిర్వహించబడుతుంది.",
-                settings_close: "ఇంటర్‌ఫేస్ మూసివేయండి"
+                settings_key_info: "API Key Information",
+                settings_key_desc: "All AI functions are powered by the **Gemini API**. The key is handled securely by the canvas environment.",
+                settings_close: "CLOSE INTERFACE"
             }
         };
 
@@ -787,7 +793,8 @@
             statusP.textContent = 'Executing Neural Injection... Standby...';
             outputDiv.innerHTML = '';
 
-            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            // FIX: Append API_KEY in exponentialBackoffFetch
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
             const systemPrompt = `You are a creative idea generation matrix. Based on the user's topic, you must generate a list of exactly three highly creative, divergent, and unique concepts. The output must be a valid JSON array of objects, where each object has a key 'idea' with the concept description. Do not include any text outside the JSON block.`;
 
             const payload = {
@@ -864,7 +871,8 @@
             ttsControls.classList.add('hidden');
             lastQueryText = "";
 
-            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            // FIX: Append API_KEY in exponentialBackoffFetch
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
             let systemPrompt = "";
             let tools = undefined;
 
@@ -954,7 +962,7 @@
 
             } catch (error) {
                 console.error("Command Center API Error:", error);
-                statusP.textContent = `[ERROR]: Command Execution Failed. Check console for details. (${error.message})`;
+                statusP.textContent = `[ERROR]: Neural Injection Failed. Check console for details. (${error.message})`;
                 outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
             }
         }
@@ -998,7 +1006,8 @@
             audioPlayer.pause();
             audioPlayer.removeAttribute('src');
 
-            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+            // FIX: Append API_KEY in exponentialBackoffFetch
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-tts:generateContent`;
             const voice = "Kore"; // Choosing a firm, clear voice
 
             const payload = {
