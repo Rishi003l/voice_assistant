@@ -192,6 +192,25 @@
             <!-- Key Capabilities Header -->
             <h2 class="text-center text-3xl font-bold mb-8 text-white text-neon-glow" data-i18n="capabilities_header">Key Capabilities</h2>
 
+            <!-- New LLM Features Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                <!-- LLM Feature 1: Emotional Tone Detector -->
+                <div onclick="switchView('tone-detector-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-pink-600/50">
+                    <h3 class="text-2xl font-bold mb-2 text-pink-500" data-i18n="cap_tone_title">Emotional Tone Detector ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_tone_desc">Analyze text for emotional content (e.g., Frustration, Excitement, Calm) using structured AI analysis.</p>
+                </div>
+                <!-- LLM Feature 2: Chat Translator -->
+                <div onclick="switchView('translator-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-yellow-500/50">
+                    <h3 class="text-2xl font-bold mb-2 text-yellow-500" data-i18n="cap_translate_title">Chat Translator ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_translate_desc">Get fast, nuanced, and context-aware translations for informal and conversational text.</p>
+                </div>
+                 <!-- LLM Feature 3: Code Review (Placeholder link to query view) -->
+                 <div onclick="switchView('query-view')" class="p-6 rounded-xl glow-card cursor-pointer hover:border-purple-500/50">
+                    <h3 class="text-2xl font-bold mb-2 text-purple-500" data-i18n="query_mode_review">Code Review ✨</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_review_desc">Use structured AI to assess code quality, identify errors, and suggest improvements.</p>
+                </div>
+            </div>
+
             <!-- Key Capabilities Grid (Matching the image) -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Card 1: Real-Time Voice -->
@@ -251,7 +270,7 @@
         </div>
 
         <!-- ------------------------------------------------------------------------------------ -->
-        <!-- VIEW 3: Query View / Command Center -->
+        <!-- VIEW 3: Query View / Command Center (Multimodal, Code, Review) -->
         <!-- ------------------------------------------------------------------------------------ -->
         <div id="query-view" class="view hidden">
             <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
@@ -260,15 +279,20 @@
             <div class="glow-card p-6 rounded-xl">
                 <form onsubmit="handleCommandCenter(event)" id="query-form">
                     <!-- Mode Selector -->
-                    <div class="mb-4 flex space-x-4">
-                        <label class="text-white/80" data-i18n="query_mode_label">Select Mode:</label>
-                        <label class="flex items-center cursor-pointer">
+                    <div class="mb-4 flex space-x-4 flex-wrap">
+                        <label class="text-white/80 pr-2 py-1" data-i18n="query_mode_label">Select Mode:</label>
+                        <label class="flex items-center cursor-pointer py-1">
                             <input type="radio" name="query_mode" value="general" checked class="form-radio text-neon-teal bg-black border-neon-teal/50 focus:ring-neon-teal">
                             <span class="ml-2 text-white" data-i18n="query_mode_general">General Analysis</span>
                         </label>
-                        <label class="flex items-center cursor-pointer">
+                        <label class="flex items-center cursor-pointer py-1">
                             <input type="radio" name="query_mode" value="code" class="form-radio text-neon-teal bg-black border-neon-teal/50 focus:ring-neon-teal">
                             <span class="ml-2 text-white" data-i18n="query_mode_code">Code Snippet</span>
+                        </label>
+                        <!-- NEW MODE: Code Review -->
+                        <label class="flex items-center cursor-pointer py-1">
+                            <input type="radio" name="query_mode" value="review" class="form-radio text-neon-teal bg-black border-neon-teal/50 focus:ring-neon-teal">
+                            <span class="ml-2 text-white" data-i18n="query_mode_review">Code Review ✨</span>
                         </label>
                     </div>
 
@@ -297,6 +321,62 @@
                     <!-- AI Output -->
                     <div id="query-output" class="prose prose-invert max-w-none text-white mt-4">
                         <!-- AI Generated content, code block, or grounding citations will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 4: Tone Detector View -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="tone-detector-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-pink-500 text-neon-glow" data-i18n="tone_header">EMOTIONAL TONE DETECTOR ✨</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="tone_prompt">Enter a message, email, or simple sentence to analyze its core emotional tone:</p>
+                <form onsubmit="handleToneDetection(event)" id="tone-form">
+                    <textarea id="tone-input" required rows="4" class="w-full p-3 mb-4 rounded-md bg-black border border-neon-teal/50 text-white focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g., I am extremely frustrated with the server outage and need a resolution immediately." data-i18n-placeholder="tone_placeholder"></textarea>
+                    <button type="submit" class="glow-button w-full bg-pink-600/70 text-white font-bold py-3 rounded-md hover:bg-pink-600 transition duration-300" data-i18n="tone_submit">ANALYZE TONE</button>
+                </form>
+
+                <div id="tone-output-container" class="mt-8 pt-4 border-t border-pink-500/50">
+                    <p class="text-white/60 text-center" id="tone-status" data-i18n="tone_waiting">Awaiting Text Input...</p>
+                    <div id="tone-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- Tone results will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 5: Chat Translator View (NEW) -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="translator-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-yellow-500 text-neon-glow" data-i18n="translate_header">CHAT TRANSLATOR ✨</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="translate_prompt">Enter conversational text and select the target language for nuanced translation:</p>
+                <form onsubmit="handleTranslation(event)" id="translator-form">
+                    <!-- Language Selector -->
+                    <div class="mb-4 flex items-center space-x-4">
+                        <label for="target-language" class="text-white/80" data-i18n="translate_target_label">Target Language:</label>
+                        <select id="target-language" class="bg-black text-white border border-yellow-500/50 rounded-md p-2 focus:ring-0 focus:border-yellow-500">
+                            <option value="German">German (Deutsch)</option>
+                            <option value="Japanese">Japanese (日本語)</option>
+                            <option value="Spanish">Spanish (Español)</option>
+                        </select>
+                    </div>
+
+                    <textarea id="translator-input" required rows="4" class="w-full p-3 mb-4 rounded-md bg-black border border-yellow-500/50 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="e.g., Hey man, did you see the memo about the server deployment schedule? It looks like we're totally screwed if we don't finish by Friday." data-i18n-placeholder="translate_placeholder"></textarea>
+                    <button type="submit" class="glow-button w-full bg-yellow-600/70 text-black font-bold py-3 rounded-md hover:bg-yellow-600 transition duration-300" data-i18n="translate_submit">TRANSLATE TEXT</button>
+                </form>
+
+                <div id="translator-output-container" class="mt-8 pt-4 border-t border-yellow-500/50">
+                    <p class="text-white/60 text-center" id="translator-status" data-i18n="translate_waiting">Awaiting Text Input...</p>
+                    <div id="translator-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- Translation results will go here -->
                     </div>
                 </div>
             </div>
@@ -370,7 +450,11 @@
     <!-- JAVASCRIPT LOGIC -->
     <!-- ------------------------------------------------------------------------------------ -->
     <script>
-        const API_KEY = "AIzaSyBUa3I3oPt0K4kUxUbLMnFcN8kwIK5uUbg"; // Placeholder, key is supplied by the canvas environment
+        // --- API KEY NOTE ---
+        // For GitHub Pages hosting, you must replace the empty string below
+        // with your actual Google AI API Key for the app to function.
+        // BE AWARE: This key will be exposed in the browser's source code.
+        const API_KEY = "AIzaSyBUa3I3oPt0K4kUxUbLMnFcN8kwIK5uUbg"; 
         const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
         // Global state for views
@@ -585,6 +669,11 @@
 
                 // NEW CAPABILITIES CONTENT
                 capabilities_header: "Key Capabilities",
+                cap_tone_title: "Emotional Tone Detector ✨",
+                cap_tone_desc: "Analyze text for emotional content (e.g., Frustration, Excitement, Calm) using structured AI analysis.",
+                cap_translate_title: "Chat Translator ✨",
+                cap_translate_desc: "Get fast, nuanced, and context-aware translations for informal and conversational text.",
+                cap_review_desc: "Use structured AI to assess code quality, identify errors, and suggest improvements.",
                 cap_voice_title: "Real-Time Voice",
                 cap_voice_desc: "Engage in fully natural conversations, seamlessly looking for answers or acting like a human.",
                 cap_lang_title: "Multi-Language",
@@ -599,23 +688,41 @@
                 cap_responsive_desc: "Optimized for flawless viewing and interaction on all devices, from mobile to desktop.",
 
 
-                // OLD CONTENT (retained for other views)
+                // FEATURE VIEWS
                 btn_home: "← RETURN TO HUB",
                 brain_header: "IDEA MATRIX BRAINSTORM",
                 brain_prompt: "Enter a topic to generate three creative concepts:",
                 brain_placeholder: "e.g., A novel concept for renewable energy storage",
                 brain_submit: "GENERATE CONCEPTS",
                 brain_waiting: "Awaiting Input...",
+
                 query_header: "CORE COMMAND CENTER",
                 query_mode_label: "Select Mode:",
                 query_mode_general: "General Analysis",
                 query_mode_code: "Code Snippet",
+                query_mode_review: "Code Review ✨",
                 query_text_placeholder: "Enter your command (e.g., Explain quantum computing, or Write a Python function for a quicksort).",
                 query_image_label: "Upload Image (Optional for multimodal analysis):",
                 query_submit: "EXECUTE COMMAND",
                 query_waiting: "Awaiting Command Execution...",
                 query_tts_read: "Read Aloud 🔊",
                 query_citation_header: "Grounding Sources:",
+
+                tone_header: "EMOTIONAL TONE DETECTOR ✨",
+                tone_prompt: "Enter a message, email, or simple sentence to analyze its core emotional tone:",
+                tone_placeholder: "e.g., I am extremely frustrated with the server outage and need a resolution immediately.",
+                tone_submit: "ANALYZE TONE",
+                tone_waiting: "Awaiting Text Input...",
+                
+                translate_header: "CHAT TRANSLATOR ✨",
+                translate_prompt: "Enter conversational text and select the target language for nuanced translation:",
+                translate_target_label: "Target Language:",
+                translate_placeholder: "e.g., Hey man, did you see the memo about the server deployment schedule? It looks like we're totally screwed if we don't finish by Friday.",
+                translate_submit: "TRANSLATE TEXT",
+                translate_waiting: "Awaiting Text Input...",
+
+
+                // SETTINGS
                 settings_title: "SYSTEM SETTINGS",
                 settings_source_code: "HTML Source Code Utility",
                 settings_source_desc: "Copy the complete source code of this application to your clipboard.",
@@ -649,6 +756,11 @@
 
                 // NEW CAPABILITIES CONTENT
                 capabilities_header: "मुख्य क्षमताएं",
+                cap_tone_title: "भावनात्मक टोन डिटेक्टर ✨",
+                cap_tone_desc: "संरचित एआई विश्लेषण का उपयोग करके भावनात्मक सामग्री (जैसे निराशा, उत्साह, शांति) के लिए पाठ का विश्लेषण करें।",
+                cap_translate_title: "चैट अनुवादक ✨",
+                cap_translate_desc: "अनौपचारिक और संवादात्मक पाठ के लिए तेज़, सूक्ष्म और संदर्भ-जागरूक अनुवाद प्राप्त करें।",
+                cap_review_desc: "कोड की गुणवत्ता का आकलन करने, त्रुटियों की पहचान करने और सुधार सुझाने के लिए संरचित एआई का उपयोग करें।",
                 cap_voice_title: "रीयल-टाइम वॉयस",
                 cap_voice_desc: "पूरी तरह से प्राकृतिक बातचीत में शामिल हों, सहजता से उत्तर खोजें या मानव की तरह कार्य करें।",
                 cap_lang_title: "बहु-भाषा",
@@ -661,25 +773,41 @@
                 cap_design_desc: "नियॉन चमक, हाइलाइट्स और सहज एनिमेशन के साथ एक चिकना, गहरा साइबरपंक यूआई का आनंद लें।",
                 cap_responsive_title: "पूरी तरह से प्रतिक्रियाशील",
                 cap_responsive_desc: "मोबाइल से डेस्कटॉप तक, सभी उपकरणों पर त्रुटिहीन देखने और बातचीत के लिए अनुकूलित।",
-
-
-                // OLD CONTENT (retained for other views)
+                
+                // FEATURE VIEWS
                 btn_home: "← हब पर लौटें",
                 brain_header: "आइडिया मैट्रिक्स मंथन",
                 brain_prompt: "तीन रचनात्मक अवधारणाएँ उत्पन्न करने के लिए एक विषय दर्ज करें:",
                 brain_placeholder: "उदाहरण: अक्षय ऊर्जा भंडारण के लिए एक उपन्यास अवधारणा",
                 brain_submit: "अवधारणाएँ उत्पन्न करें",
                 brain_waiting: "इनपुट की प्रतीक्षा है...",
+
                 query_header: "कोर कमांड सेंटर",
                 query_mode_label: "मोड चुनें:",
                 query_mode_general: "सामान्य विश्लेषण",
                 query_mode_code: "कोड स्निपेट",
+                query_mode_review: "कोड समीक्षा ✨",
                 query_text_placeholder: "अपना कमांड दर्ज करें (उदाहरण: क्वांटम कंप्यूटिंग समझाएँ, या क्विकसॉर्ट के लिए एक पायथन फ़ंक्शन लिखें)।",
                 query_image_label: "छवि अपलोड करें (मल्टीमॉडल विश्लेषण के लिए वैकल्पिक):",
                 query_submit: "कमांड निष्पादित करें",
                 query_waiting: "कमांड निष्पादन की प्रतीक्षा है...",
                 query_tts_read: "ज़ोर से पढ़ें 🔊",
                 query_citation_header: "ग्राउंडिंग स्रोत:",
+                
+                tone_header: "भावनात्मक टोन डिटेक्टर ✨",
+                tone_prompt: "इसके मूल भावनात्मक टोन का विश्लेषण करने के लिए एक संदेश, ईमेल, या साधारण वाक्य दर्ज करें:",
+                tone_placeholder: "उदाहरण: मैं सर्वर आउटेज से बहुत निराश हूं और मुझे तुरंत समाधान चाहिए।",
+                tone_submit: "टोन का विश्लेषण करें",
+                tone_waiting: "पाठ इनपुट की प्रतीक्षा है...",
+
+                translate_header: "चैट अनुवादक ✨",
+                translate_prompt: "सूक्ष्म अनुवाद के लिए संवादात्मक पाठ दर्ज करें और लक्ष्य भाषा का चयन करें:",
+                translate_target_label: "लक्ष्य भाषा:",
+                translate_placeholder: "उदाहरण: अरे यार, क्या आपने सर्वर परिनियोजन अनुसूची के बारे में ज्ञापन देखा? अगर हम शुक्रवार तक खत्म नहीं करते हैं तो हम पूरी तरह से खराब हो जाएंगे।",
+                translate_submit: "पाठ का अनुवाद करें",
+                translate_waiting: "पाठ इनपुट की प्रतीक्षा है...",
+
+                // SETTINGS
                 settings_title: "सिस्टम सेटिंग्स",
                 settings_source_code: "एचटीएमएल सोर्स कोड उपयोगिता",
                 settings_source_desc: "इस एप्लिकेशन का पूरा सोर्स कोड अपने क्लिपबोर्ड पर कॉपी करें।",
@@ -713,6 +841,11 @@
 
                 // NEW CAPABILITIES CONTENT
                 capabilities_header: "కీ సామర్థ్యాలు",
+                cap_tone_title: "భావోద్వేగ టోన్ డిటెక్టర్ ✨",
+                cap_tone_desc: "నిర్మాణాత్మక AI విశ్లేషణను ఉపయోగించి భావోద్వేగ కంటెంట్ (ఉదా. నిరాశ, ఉత్సాహం, ప్రశాంతత) కోసం వచనాన్ని విశ్లేషించండి.",
+                cap_translate_title: "చాట్ ట్రాన్స్లేటర్ ✨",
+                cap_translate_desc: "అనధికారిక మరియు సంభాషణాత్మక వచనం కోసం వేగవంతమైన, సూక్ష్మమైన మరియు సందర్భ-అవగాహన అనువాదాలను పొందండి.",
+                cap_review_desc: "కోడ్ నాణ్యతను అంచనా వేయడానికి, లోపాలను గుర్తించడానికి మరియు మెరుగుదలలను సూచించడానికి నిర్మాణాత్మక AIని ఉపయోగించండి.",
                 cap_voice_title: "రియల్-టైమ్ వాయిస్",
                 cap_voice_desc: "పూర్తిగా సహజమైన సంభాషణలలో పాల్గొనండి, సజావుగా సమాధానాల కోసం వెతకండి లేదా మనిషిలా వ్యవహరించండి.",
                 cap_lang_title: "బహుళ భాష",
@@ -726,23 +859,41 @@
                 cap_responsive_title: "పూర్తిగా ప్రతిస్పందించే",
                 cap_responsive_desc: "మొబైల్ నుండి డెస్క్‌టాప్ వరకు, అన్ని పరికరాల్లో దోషరహిత వీక్షణ మరియు ఇంటరాక్షన్ కోసం ఆప్టిమైజ్ చేయబడింది.",
                 
-                // OLD CONTENT (retained for other views)
+                // FEATURE VIEWS
                 btn_home: "← హబ్‌కు తిరిగి వెళ్లండి",
                 brain_header: "ఐడియా మ్యాట్రిక్స్ బ్రెయిన్‌స్టార్మ్",
                 brain_prompt: "మూడు సృజనాత్మక ఆలోచనలను రూపొందించడానికి ఒక అంశాన్ని నమోదు చేయండి:",
                 brain_placeholder: "ఉదా: పునరుత్పాదక ఇంధన నిల్వ కోసం ఒక కొత్త ఆలోచన",
                 brain_submit: "ఆలోచనలను రూపొందించండి",
                 brain_waiting: "ఇన్‌పుట్ కోసం వేచి ఉంది...",
+
                 query_header: "కోర్ కమాండ్ సెంటర్",
                 query_mode_label: "మోడ్‌ను ఎంచుకోండి:",
                 query_mode_general: "సాధారణ విశ్లేషణ",
                 query_mode_code: "కోడ్ స్నిప్పెట్",
+                query_mode_review: "కోడ్ రివ్యూ ✨",
                 query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి)।",
                 query_image_label: "చిత్రాన్ని అప్‌లోడ్ చేయండి (మల్టీమోడల్ విశ్లేషణ కోసం ఐచ్ఛికం):",
                 query_submit: "ఆదేశాన్ని అమలు చేయండి",
                 query_waiting: "ఆదేశం అమలు కోసం వేచి ఉంది...",
                 query_tts_read: "గట్టిగా చదవండి 🔊",
                 query_citation_header: "గ్రౌండింగ్ మూలాలు:",
+
+                tone_header: "భావోద్వేగ టోన్ డిటెక్టర్ ✨",
+                tone_prompt: "దీని ప్రధాన భావోద్వేగ స్వరాన్ని విశ్లేషించడానికి సందేశం, ఇమెయిల్ లేదా సాధారణ వాక్యాన్ని నమోదు చేయండి:",
+                tone_placeholder: "ఉదా: సర్వర్ అంతరాయంపై నేను చాలా నిరాశకు గురయ్యాను మరియు వెంటనే పరిష్కారం కావాలి.",
+                tone_submit: "టోన్‌ను విశ్లేషించండి",
+                tone_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది...",
+
+                translate_header: "చాట్ ట్రాన్స్లేటర్ ✨",
+                translate_prompt: "సూక్ష్మ అనువాదం కోసం సంభాషణాత్మక వచనాన్ని నమోదు చేసి, లక్ష్య భాషను ఎంచుకోండి:",
+                translate_target_label: "లక్ష్య భాష:",
+                translate_placeholder: "ఉదా: హే మనిషి, సర్వర్ విస్తరణ షెడ్యూల్ గురించి మెమో చూసావా? శుక్రవారం లోపు పూర్తి చేయకపోతే మనం పూర్తిగా చిక్కుకుపోతాము.",
+                translate_submit: "వచనాన్ని అనువదించండి",
+                translate_waiting: "వచన ఇన్‌పుట్ కోసం వేచి ఉంది...",
+
+
+                // SETTINGS
                 settings_title: "సిస్టమ్ సెట్టింగ్‌లు",
                 settings_source_code: "HTML సోర్స్ కోడ్ యుటిలిటీ",
                 settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి।",
@@ -793,7 +944,6 @@
             statusP.textContent = 'Executing Neural Injection... Standby...';
             outputDiv.innerHTML = '';
 
-            // FIX: Append API_KEY in exponentialBackoffFetch
             const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
             const systemPrompt = `You are a creative idea generation matrix. Based on the user's topic, you must generate a list of exactly three highly creative, divergent, and unique concepts. The output must be a valid JSON array of objects, where each object has a key 'idea' with the concept description. Do not include any text outside the JSON block.`;
 
@@ -864,27 +1014,20 @@
             const userQuery = textInput.value;
             const imageFile = imageInput.files[0];
 
-            if (!userQuery && !imageFile) return;
+            if (!userQuery && mode !== 'review' && !imageFile) return;
 
             statusP.textContent = 'Executing Command... Standby...';
             outputDiv.innerHTML = '';
             ttsControls.classList.add('hidden');
             lastQueryText = "";
 
-            // FIX: Append API_KEY in exponentialBackoffFetch
             const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
             let systemPrompt = "";
             let tools = undefined;
+            let generationConfig = undefined;
+            let responseHtml = ""; 
 
-            if (mode === 'code') {
-                systemPrompt = "You are a specialized code generation engine. When generating code, you MUST only output the code block using standard markdown syntax (e.g., ```python\n...\n```). Do not include any conversational text, explanations, or citations outside of the code block.";
-            } else { // general/grounded search
-                systemPrompt = "You are an advanced factual analysis engine. Provide a concise and accurate response to the user's query. If the query is a simple factual question, use Google Search for grounding.";
-                if (!imageFile) {
-                     tools = [{ "google_search": {} }]; // Use grounding only for text-only factual queries
-                }
-            }
-
+            // --- Configure Contents (Text/Image) ---
             const contents = [];
             let parts = [{ text: userQuery }];
 
@@ -902,19 +1045,49 @@
                             data: base64Image
                         }
                     });
+                    // Special case: Image analysis if only image is provided
+                    if (!userQuery || userQuery.trim() === '') {
+                         systemPrompt = "You are a visual analysis engine. Describe the image in detail, identify key objects, and generate a concise, descriptive caption.";
+                         // Ensure parts[0] is not empty
+                         parts[0].text = "Describe this image in detail and create a caption for it.";
+                    }
                 } catch (e) {
                     console.error("Image loading failed:", e);
                     statusP.textContent = 'Error: Could not process image file.';
                     return;
                 }
             }
-
             contents.push({ role: "user", parts: parts });
+
+            // --- Configure based on MODE ---
+            if (mode === 'code') {
+                systemPrompt = "You are a specialized code generation engine. When generating code, you MUST only output the code block using standard markdown syntax (e.g., ```python\n...\n```). Do not include any conversational text, explanations, or citations outside of the code block.";
+            } else if (mode === 'review') {
+                systemPrompt = "You are an expert software engineer performing a code review. Analyze the provided code snippet for correctness, security, style, and efficiency. Respond ONLY with a valid JSON object that strictly follows the provided schema.";
+                
+                generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            summary: { type: "STRING", description: "A high-level overview and assessment of the code." },
+                            errors_found: { type: "ARRAY", items: { type: "STRING" }, description: "A list of critical errors or potential bugs." },
+                            improvements: { type: "ARRAY", items: { type: "STRING" }, description: "A list of 3-5 suggestions for improving style, performance, or readability." }
+                        }
+                    }
+                };
+
+            } else if (mode === 'general' && !imageFile) {
+                systemPrompt = "You are an advanced factual analysis engine. Provide a concise and accurate response to the user's query. If the query is a simple factual question, use Google Search for grounding.";
+                tools = [{ "google_search": {} }]; // Use grounding only for text-only factual queries
+            }
+            // --- END Configure based on MODE ---
 
             const payload = {
                 contents: contents,
                 systemInstruction: { parts: [{ text: systemPrompt }] },
-                tools: tools
+                tools: tools,
+                generationConfig: generationConfig
             };
 
             try {
@@ -926,32 +1099,65 @@
 
                 const result = await response.json();
                 const candidate = result.candidates?.[0];
-                const text = candidate?.content?.parts?.[0]?.text;
+                const rawText = candidate?.content?.parts?.[0]?.text;
 
-                if (text) {
-                    outputDiv.innerHTML = markdownToHtml(text);
-                    lastQueryText = text;
+                if (rawText) {
+                    lastQueryText = rawText;
 
-                    // Handle Grounding Sources (if used)
-                    const groundingMetadata = candidate?.groundingMetadata;
-                    let sources = [];
-                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                        sources = groundingMetadata.groundingAttributions
-                            .map(attribution => ({
-                                uri: attribution.web?.uri,
-                                title: attribution.web?.title,
-                            }))
-                            .filter(source => source.uri && source.title);
-                    }
+                    if (mode === 'review') {
+                        const reviewData = JSON.parse(rawText);
 
-                    if (sources.length > 0) {
-                        let sourceHtml = `<h4 class="text-lg font-bold mt-6 mb-2 text-neon-teal" data-i18n="query_citation_header">${languageData[document.getElementById('language-select').value].query_citation_header}</h4><ul class="list-disc pl-5 text-sm space-y-1 text-white/70">`;
-                        sources.forEach(s => {
-                            sourceHtml += `<li><a href="${s.uri}" target="_blank" class="hover:underline text-neon-teal/80">${s.title}</a></li>`;
+                        responseHtml += `<h3 class="text-3xl font-bold text-neon-teal mb-4">Code Review Analysis</h3>`;
+
+                        responseHtml += `<h4 class="text-xl font-bold mt-4 text-white">Summary</h4>`;
+                        responseHtml += `<p class="text-white/80">${reviewData.summary}</p>`;
+
+                        responseHtml += `<h4 class="text-xl font-bold mt-4 text-red-500">Errors/Issues Found</h4>`;
+                        responseHtml += `<ul class="list-disc pl-5 text-red-400 space-y-1">`;
+                        if (reviewData.errors_found && reviewData.errors_found.length > 0) {
+                            reviewData.errors_found.forEach(e => {
+                                responseHtml += `<li>${e}</li>`;
+                            });
+                        } else {
+                            responseHtml += `<li class="text-green-400">No critical errors found.</li>`;
+                        }
+                        responseHtml += `</ul>`;
+
+                        responseHtml += `<h4 class="text-xl font-bold mt-4 text-neon-teal">Suggested Improvements</h4>`;
+                        responseHtml += `<ul class="list-disc pl-5 text-white/80 space-y-1">`;
+                        reviewData.improvements.forEach(i => {
+                            responseHtml += `<li>${i}</li>`;
                         });
-                        sourceHtml += '</ul>';
-                        outputDiv.innerHTML += sourceHtml;
+                        responseHtml += `</ul>`;
+
+                        outputDiv.innerHTML = responseHtml;
+
+                    } else {
+                        // Handle standard markdown output (General, Code Snippet, or Image Analysis)
+                        outputDiv.innerHTML = markdownToHtml(rawText);
+
+                        // Handle Grounding Sources (if used)
+                        const groundingMetadata = candidate?.groundingMetadata;
+                        let sources = [];
+                        if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                            sources = groundingMetadata.groundingAttributions
+                                .map(attribution => ({
+                                    uri: attribution.web?.uri,
+                                    title: attribution.web?.title,
+                                }))
+                                .filter(source => source.uri && source.title);
+                        }
+
+                        if (sources.length > 0) {
+                            let sourceHtml = `<h4 class="text-lg font-bold mt-6 mb-2 text-neon-teal" data-i18n="query_citation_header">${languageData[document.getElementById('language-select').value].query_citation_header}</h4><ul class="list-disc pl-5 text-sm space-y-1 text-white/70">`;
+                            sources.forEach(s => {
+                                sourceHtml += `<li><a href="${s.uri}" target="_blank" class="hover:underline text-neon-teal/80">${s.title}</a></li>`;
+                            });
+                            sourceHtml += '</ul>';
+                            outputDiv.innerHTML += sourceHtml;
+                        }
                     }
+
 
                     statusP.textContent = 'Command Executed. Results Deployed.';
                     ttsControls.classList.remove('hidden');
@@ -962,12 +1168,137 @@
 
             } catch (error) {
                 console.error("Command Center API Error:", error);
-                statusP.textContent = `[ERROR]: Neural Injection Failed. Check console for details. (${error.message})`;
+                statusP.textContent = `[ERROR]: Command Execution Failed. Check console for details. (${error.message})`;
                 outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
             }
         }
 
-        // Simple markdown to HTML conversion for output styling
+        // ----------------------------------------------------------------------------
+        // 7. LLM Feature: EMOTIONAL TONE DETECTOR (View 4)
+        // ----------------------------------------------------------------------------
+
+        async function handleToneDetection(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('tone-input');
+            const outputDiv = document.getElementById('tone-output');
+            const statusP = document.getElementById('tone-status');
+            const userQuery = inputElement.value;
+
+            if (!userQuery) return;
+
+            statusP.textContent = 'Analyzing Textual Substrate...';
+            outputDiv.innerHTML = '';
+            
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
+            const systemPrompt = "You are a sophisticated emotional analysis engine. Analyze the following text and determine its dominant emotional tone. Respond ONLY with a valid JSON object that strictly follows the provided schema.";
+
+            const payload = {
+                contents: [{ parts: [{ text: `Analyze the dominant emotional tone of the following text: "${userQuery}"` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            tone: { type: "STRING", description: "The dominant emotional state (e.g., Frustration, Excitement, Calm, Neutral, Analytical)." },
+                            explanation: { type: "STRING", description: "A brief explanation of why that tone was detected based on the word choices." }
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const toneData = JSON.parse(jsonText);
+                    
+                    let html = `<h3 class="text-3xl font-bold mb-4 text-neon-teal">Detected Tone</h3>`;
+                    html += `<p class="text-4xl font-black text-pink-500 text-neon-glow">${toneData.tone}</p>`;
+                    html += `<h4 class="text-xl font-bold mt-4 text-white">Analysis</h4>`;
+                    html += `<p class="text-white/80">${toneData.explanation}</p>`;
+                    
+                    outputDiv.innerHTML = html;
+                    statusP.textContent = 'Analysis Complete.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Tone Detection API Error:", error);
+                statusP.textContent = `[ERROR]: Analysis Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
+            }
+        }
+
+
+        // ----------------------------------------------------------------------------
+        // 8. LLM Feature: CHAT TRANSLATOR (View 5 - NEW)
+        // ----------------------------------------------------------------------------
+        async function handleTranslation(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('translator-input');
+            const targetLangElement = document.getElementById('target-language');
+            const outputDiv = document.getElementById('translator-output');
+            const statusP = document.getElementById('translator-status');
+            
+            const sourceText = inputElement.value;
+            const targetLanguage = targetLangElement.value;
+
+            if (!sourceText) return;
+
+            statusP.textContent = `Translating to ${targetLanguage}...`;
+            outputDiv.innerHTML = '';
+            
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent`;
+            const systemPrompt = `You are an expert conversational translator. You must translate the user's text into ${targetLanguage}, ensuring the translated output maintains the original tone, context, and conversational nuance (slang, informality, etc.). Provide ONLY the translated text in the target language, without any commentary or explanations.`;
+
+            const userQuery = `Translate the following conversational text into ${targetLanguage}: "${sourceText}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (rawText) {
+                    outputDiv.innerHTML = `
+                        <h4 class="text-xl font-bold text-yellow-500">${targetLanguage} Translation:</h4>
+                        <p class="text-white/90 text-lg italic mt-2 p-3 bg-black/50 border border-yellow-500/30 rounded-lg">${rawText.trim()}</p>
+                    `;
+                    statusP.textContent = 'Translation Complete.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Translation API Error:", error);
+                statusP.textContent = `[ERROR]: Translation Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error.</p>`;
+            }
+        }
+
+
+        // ----------------------------------------------------------------------------
+        // 9. CORE UTILITIES (Markdown, TTS, Settings)
+        // ----------------------------------------------------------------------------
+
         function markdownToHtml(markdown) {
             // Replace **bold** with <strong>
             let html = markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -986,10 +1317,6 @@
             return html;
         }
 
-        // ----------------------------------------------------------------------------
-        // 7. LLM Feature: TEXT-TO-SPEECH (TTS)
-        // ----------------------------------------------------------------------------
-
         async function handleTTS() {
             if (!lastQueryText) {
                 console.error("No text available for TTS.");
@@ -1006,9 +1333,8 @@
             audioPlayer.pause();
             audioPlayer.removeAttribute('src');
 
-            // FIX: Append API_KEY in exponentialBackoffFetch
             const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-tts:generateContent`;
-            const voice = "Kore"; // Choosing a firm, clear voice
+            const voice = "Kore"; 
 
             const payload = {
                 contents: [{ parts: [{ text: lastQueryText }] }],
@@ -1033,7 +1359,7 @@
                 const result = await response.json();
                 const part = result?.candidates?.[0]?.content?.parts?.[0];
                 const audioData = part?.inlineData?.data;
-                const mimeType = part?.inlineData?.mimeType; // Should be audio/L16;rate=24000
+                const mimeType = part?.inlineData?.mimeType; 
 
                 if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
                     const match = mimeType.match(/rate=(\d+)/);
@@ -1049,7 +1375,6 @@
                     audioPlayer.play();
                     ttsButton.querySelector('span').textContent = 'Playing...';
 
-                    // Reset button after playing
                     audioPlayer.onended = () => {
                         ttsButton.disabled = false;
                         ttsButton.querySelector('span').textContent = originalButtonText;
@@ -1063,17 +1388,12 @@
                 console.error("TTS API Error:", error);
                 ttsButton.querySelector('span').textContent = 'TTS Error!';
             } finally {
-                // Ensure button resets if an error occurs before playback starts
                 if (!audioPlayer.src) {
                     ttsButton.disabled = false;
                     ttsButton.querySelector('span').textContent = originalButtonText;
                 }
             }
         }
-
-        // ----------------------------------------------------------------------------
-        // 8. SETTINGS UTILITIES
-        // ----------------------------------------------------------------------------
 
         function copySourceCode() {
             const htmlSource = document.documentElement.outerHTML;
@@ -1087,7 +1407,6 @@
                     })
                     .catch(err => {
                         console.error('Could not copy text: ', err);
-                        // Fallback for environments where clipboard API is restricted
                         const tempTextArea = document.createElement('textarea');
                         tempTextArea.value = htmlSource;
                         document.body.appendChild(tempTextArea);
@@ -1103,24 +1422,18 @@
             }
         }
 
-        /**
-         * Downloads the complete HTML source of the application as an index.html file.
-         */
         function downloadSourceCode() {
             const htmlSource = document.documentElement.outerHTML;
             const filename = 'cyberspace_ai_hub.html';
-            // Create a Blob containing the HTML source
             const blob = new Blob([htmlSource], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
 
-            // Create a temporary anchor element to trigger the download
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
             document.body.appendChild(a);
             a.click();
 
-            // Clean up the temporary element and revoke the object URL
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
