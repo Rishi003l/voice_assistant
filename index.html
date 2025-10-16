@@ -1,170 +1,449 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark"> <!-- Default to dark mode -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Personal Assistant</title>
+    <title>AI Voice Assistant</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Tailwind config to enable dark mode via class
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* Light and Dark mode background colors */
+            @apply bg-white dark:bg-black text-gray-900 dark:text-white;
         }
-        /* Custom styles for button transitions and status indicator */
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-            animation: pulse 2s infinite;
-        }
-        .status-idle { background-color: #9ca3af; animation: none; } /* gray-400 */
-        .status-active { background-color: #22c55e; } /* green-500 */
-        .status-error { background-color: #ef4444; animation: none; } /* red-500 */
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        
+        .gradient-bg {
+            background: linear-gradient(-45deg, #ffffff, #e5e7eb, #ffffff, #f3f4f6);
+            background-size: 400% 400%;
+            animation: gradient-light 15s ease infinite;
         }
 
-        #call-button {
-            transition: background-color 0.3s ease, transform 0.1s ease;
+        .dark .gradient-bg {
+            background: linear-gradient(-45deg, #000000, #111827, #000000, #1f2937);
+            background-size: 400% 400%;
+            animation: gradient-dark 15s ease infinite;
         }
-        #call-button:active {
-            transform: scale(0.98);
+        
+        @keyframes gradient-light {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes gradient-dark {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-card {
+             @apply bg-gray-100/50 dark:bg-gray-900/50 backdrop-blur-xl border border-gray-200 dark:border-gray-800;
+        }
+
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(5px) translateY(5px); }
+        }
+
+        .animate-bounce-arrow {
+            animation: bounce-arrow 2s infinite;
+        }
+        
+        @keyframes bounce-arrow-diag {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10px, 10px); }
+        }
+
+        .animate-bounce-arrow-diag {
+            animation: bounce-arrow-diag 2s infinite;
+        }
+
+        .modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .modal-hidden {
+            pointer-events: none;
+        }
+        .modal-hidden .modal-backdrop {
+            opacity: 0;
+        }
+        .modal-hidden .modal-content {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .spinner {
+            border-top-color: #14B8A6;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Custom styles for radio buttons */
+        .theme-radio:checked + label, .lang-radio:checked + label {
+            @apply bg-teal-600 border-teal-500 text-white;
+        }
+        .translate-button.active {
+             @apply bg-teal-600 text-white;
+        }
+
+        /* NEW: Glowing animation for settings icon */
+        @keyframes glow-icon {
+            0%, 100% {
+                filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 8px rgba(20, 184, 166, 1));
+            }
+        }
+
+        #settings-button {
+            animation: glow-icon 3s ease-in-out infinite;
+        }
+
+        /* NEW: Glowing animation for title text */
+        @keyframes glow-text {
+            0%, 100% {
+                text-shadow: 0 0 5px rgba(20, 184, 166, 0.5), 0 0 10px rgba(20, 184, 166, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 10px rgba(20, 184, 166, 0.8), 0 0 20px rgba(20, 184, 166, 0.5);
+            }
+        }
+
+        .glowing-title {
+            animation: glow-text 3s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+<body class="gradient-bg flex items-center justify-center min-h-screen p-4 overflow-hidden">
 
-    <!-- Main container card -->
-    <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-        <!-- Header Section -->
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold text-white">Your Personal AI Assistant</h1>
-            <p class="text-gray-400 mt-2">Click the button below to start a conversation.</p>
-        </div>
-
-        <!-- Status Display -->
-        <div id="status-container" class="mb-8 flex items-center justify-center space-x-3 bg-gray-900/50 p-3 rounded-lg">
-            <div id="status-indicator" class="status-indicator status-idle"></div>
-            <span id="status-text" class="text-gray-300 font-medium">Idle</span>
-        </div>
-
-        <!-- Control Button -->
-        <button id="call-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl text-lg">
-            Start Call
+    <div class="content-card rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative">
+        <button id="settings-button" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
         </button>
+
+        <div class="mb-6">
+            <h1 data-lang="title" class="glowing-title text-4xl font-bold">AI Voice Assistant</h1>
+            <p data-lang="subtitle" class="text-gray-500 dark:text-gray-400 mt-3 text-lg">Your intelligent companion is ready to talk.</p>
+        </div>
+        
+        <div class="mt-8 text-left space-y-3 bg-gray-200/50 dark:bg-gray-800/50 p-4 rounded-lg">
+            <p data-lang="features_title" class="text-center font-semibold mb-3">Features Included</p>
+            <div class="flex items-center space-x-3 text-sm">
+                <span class="text-teal-500">✓</span>
+                <span data-lang="feature_voice">Real-time Voice Conversations</span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm">
+                <span class="text-teal-500">✓</span>
+                <span data-lang="feature_summary">✨ Gemini-Powered Summaries</span>
+            </div>
+             <div class="flex items-center space-x-3 text-sm">
+                <span class="text-teal-500">✓</span>
+                <span data-lang="feature_actions">✨ AI-Suggested Quick Actions</span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm">
+                <span class="text-teal-500">✓</span>
+                <span data-lang="feature_themes">Customizable Themes & Languages</span>
+            </div>
+        </div>
+
+        <div id="gemini-section" class="mt-8 hidden">
+            <button id="gemini-summary-button" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all duration-300">
+                <span data-lang="summary_button">✨ View Conversation Summary</span>
+            </button>
+        </div>
+        
+        <div id="settings-panel" class="hidden absolute inset-0 bg-gray-100 dark:bg-gray-900 p-8 rounded-2xl text-left transition-opacity duration-300 overflow-y-auto">
+             <button id="close-settings-button" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 data-lang="settings_title" class="text-2xl font-bold mb-6">Settings</h2>
+            <div class="mb-6">
+                <h3 data-lang="theme_title" class="text-lg font-semibold mb-3">Theme</h3>
+                <div class="flex space-x-2">
+                    <input type="radio" id="theme-light" name="theme" value="light" class="hidden theme-radio">
+                    <label for="theme-light" data-lang="theme_light" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">Light</label>
+                    <input type="radio" id="theme-dark" name="theme" value="dark" class="hidden theme-radio">
+                    <label for="theme-dark" data-lang="theme_dark" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">Dark</label>
+                    <input type="radio" id="theme-system" name="theme" value="system" class="hidden theme-radio">
+                    <label for="theme-system" data-lang="theme_system" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">System</label>
+                </div>
+            </div>
+            <div class="mb-6">
+                <h3 data-lang="language_title" class="text-lg font-semibold mb-3">Language</h3>
+                <div class="flex space-x-2">
+                     <input type="radio" id="lang-en" name="language" value="en" class="hidden lang-radio">
+                    <label for="lang-en" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">English</label>
+                     <input type="radio" id="lang-te" name="language" value="te" class="hidden lang-radio">
+                    <label for="lang-te" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">తెలుగు</label>
+                     <input type="radio" id="lang-hi" name="language" value="hi" class="hidden lang-radio">
+                    <label for="lang-hi" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">हिन्दी</label>
+                </div>
+            </div>
+            <!-- NEW: AI Greeting Feature -->
+            <div>
+                <h3 data-lang="greeting_title" class="text-lg font-semibold mb-3">✨ Customize Greeting</h3>
+                <div class="flex flex-col space-y-2">
+                    <input type="text" id="greeting-topic-input" data-lang-placeholder="greeting_placeholder" placeholder="Enter a topic (e.g., 'space')" class="w-full bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-colors">
+                    <button id="generate-greeting-button" data-lang="greeting_button" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:bg-gray-500">Generate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="summary-modal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-backdrop fixed inset-0 bg-black/70"></div>
+        <div class="modal-content bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-2xl w-full relative">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors text-3xl leading-none">&times;</button>
+            <div class="flex justify-between items-center mb-4">
+                <h2 data-lang="summary_modal_title" class="text-2xl font-bold text-white">Conversation Summary</h2>
+                <div id="translate-buttons" class="flex space-x-2">
+                    <button data-lang-code="en" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors active">EN</button>
+                    <button data-lang-code="te" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors">తె</button>
+                    <button data-lang-code="hi" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors">हिं</button>
+                </div>
+            </div>
+            <div id="summary-output" class="bg-gray-900/50 rounded-lg p-4 min-h-[150px] text-left text-gray-300 prose prose-invert max-w-none"></div>
+            <div id="quick-actions-container" class="mt-6">
+                <h3 data-lang="actions_title" class="text-lg font-semibold text-white mb-3">Suggested Actions</h3>
+                <div id="quick-actions-buttons" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- VAPI Widget (Hidden, but required for functionality) -->
-    <!-- The assistant-id and public-key are from your provided code -->
-    <vapi-widget 
-        assistant-id="058f5c02-6154-4277-8bf6-3db5b02e064c" 
-        public-key="b7e0c1dd-df9e-4c64-a99e-000cd099f30d"
-        style="display: none;"
+    <div id="vapi-arrow-pointer" class="fixed bottom-32 right-32 text-teal-600 dark:text-teal-300 animate-bounce-arrow-diag z-40 pointer-events-none">
+        <span data-lang="click_here" class="absolute -top-8 -left-12 text-lg font-medium whitespace-nowrap">Click Here!</span>
+        <svg class="w-12 h-12" style="transform: rotate(45deg);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+    </div>
+
+    <vapi-widget
+      public-key="b7e0c1dd-df9e-4c64-a99e-000cd099f30d"
+      assistant-id="058f5c02-6154-4277-8bf6-3db5b02e064c"
     ></vapi-widget>
 
-    <!-- VAPI Client SDK Script -->
-    <script
-      src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js"
-      async
-      type="text/javascript"
-    ></script>
+    <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" async type="text/javascript"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM fully loaded. Setting up VAPI listener.');
+            let conversationHistory = [];
+            let originalSummary = '';
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-            const callButton = document.getElementById('call-button');
-            const statusText = document.getElementById('status-text');
-            const statusIndicator = document.getElementById('status-indicator');
-            let isCalling = false;
-            
-            callButton.disabled = true; // Disable button until VAPI is ready
-            statusText.textContent = 'Initializing...';
+            const translations = {
+                en: {
+                    title: "AI Voice Assistant", subtitle: "Your intelligent companion is ready to talk.", summary_button: "✨ View Conversation Summary", summary_modal_title: "Conversation Summary", click_here: "Click Here!", settings_title: "Settings", theme_title: "Theme", theme_light: "Light", theme_dark: "Dark", theme_system: "System", language_title: "Language", features_title: "Features Included", feature_voice: "Real-time Voice Conversations", feature_summary: "✨ Gemini-Powered Summaries", feature_actions: "✨ AI-Suggested Quick Actions", feature_themes: "Customizable Themes & Languages", actions_title: "Suggested Actions", greeting_title: "✨ Customize Greeting", greeting_placeholder: "Enter a topic (e.g., 'space')", greeting_button: "Generate"
+                },
+                te: {
+                    title: "AI వాయిస్ అసిస్టెంట్", subtitle: "మీ తెలివైన సహచరుడు మాట్లాడటానికి సిద్ధంగా ఉన్నాడు.", summary_button: "✨ సంభాషణ సారాంశం చూడండి", summary_modal_title: "సంభాషణ సారాంశం", click_here: "ఇక్కడ క్లిక్ చేయండి!", settings_title: "సెట్టింగ్‌లు", theme_title: "థీమ్", theme_light: "లైట్", theme_dark: "డార్క్", theme_system: "సిస్టమ్", language_title: "భాష", features_title: "ఫీచర్లు ఉన్నాయి", feature_voice: "నిజ-సమయ వాయిస్ సంభాషణలు", feature_summary: "✨ జెమిని-ఆధారిత సారాంశాలు", feature_actions: "✨ AI-సూచించిన త్వరిత చర్యలు", feature_themes: "అనుకూలీకరించదగిన థీమ్‌లు & భాషలు", actions_title: "సూచించిన చర్యలు", greeting_title: "✨ గ్రీటింగ్‌ని అనుకూలీకరించండి", greeting_placeholder: "ఒక అంశాన్ని నమోదు చేయండి (ఉదా., 'స్పేస్')", greeting_button: "సృష్టించు"
+                },
+                hi: {
+                    title: "एआई वॉयस असिस्टेंट", subtitle: "आपका बुद्धिमान साथी बात करने के लिए तैयार है।", summary_button: "✨ बातचीत का सारांश देखें", summary_modal_title: "बातचीत का सारांश", click_here: "यहां क्लिक करें!", settings_title: "सेटिंग्स", theme_title: "थीम", theme_light: "लाइट", theme_dark: "डार्क", theme_system: "सिस्टम", language_title: "भाषा", features_title: "विशेषताएँ शामिल हैं", feature_voice: "वास्तविक समय की वॉयस वार्तालाप", feature_summary: "✨ जेमिनी-संचालित सारांश", feature_actions: "✨ एआई-सुझाए गए त्वरित कार्य", feature_themes: "अनुकूलन योग्य थीम और भाषाएँ", actions_title: "सुझाए गए कार्य", greeting_title: "✨ अभिवादन को अनुकूलित करें", greeting_placeholder: "एक विषय दर्ज करें (उदा., 'अंतरिक्ष')", greeting_button: "उत्पन्न करें"
+                }
+            };
 
+            const subtitleElement = document.querySelector('[data-lang="subtitle"]');
+            const greetingTopicInput = document.getElementById('greeting-topic-input');
 
-            window.addEventListener('vapi.ready', () => {
-                console.log('VAPI SDK is ready. Initializing UI and event listeners.');
-                
-                const vapi = window.vapi;
-                callButton.disabled = false; // Enable the button now
-                setStatus('Idle', 'status-idle');
-
-
-                // --- UI Update Functions ---
-                const setStatus = (text, indicatorClass) => {
-                    statusText.textContent = text;
-                    statusIndicator.className = `status-indicator ${indicatorClass}`;
-                };
-
-                const updateButton = (text, bgColor, hoverBgColor) => {
-                    callButton.textContent = text;
-                    callButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
-                    callButton.classList.add(bgColor, hoverBgColor);
-                };
-
-                // --- VAPI Control ---
-                const startCall = () => {
-                    console.log('Attempting to start VAPI call...');
-                    isCalling = true;
-                    updateButton('End Call', 'bg-red-600', 'hover:bg-red-700');
-                    setStatus('Connecting...', 'status-active');
-                    vapi.start();
-                };
-
-                const stopCall = () => {
-                    console.log('Attempting to stop VAPI call...');
-                    isCalling = false;
-                    updateButton('Start Call', 'bg-indigo-600', 'hover:bg-indigo-700');
-                    setStatus('Idle', 'status-idle');
-                    vapi.stop();
-                };
-
-                // --- Button Event Listener ---
-                callButton.addEventListener('click', () => {
-                    console.log('Call button clicked.');
-                    if (isCalling) {
-                        stopCall();
-                    } else {
-                        startCall();
+            const setLanguage = (lang) => {
+                document.querySelectorAll('[data-lang]').forEach(el => {
+                    const key = el.getAttribute('data-lang');
+                    if (translations[lang]?.[key]) {
+                        // Don't overwrite custom greeting with default
+                        if(key === 'subtitle' && localStorage.getItem('customGreeting')) {
+                            subtitleElement.textContent = localStorage.getItem('customGreeting');
+                        } else {
+                            el.textContent = translations[lang][key];
+                        }
                     }
                 });
+                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-lang-placeholder');
+                    if (translations[lang]?.[key]) el.placeholder = translations[lang][key];
+                });
+                document.documentElement.lang = lang;
+                localStorage.setItem('language', lang);
+                document.querySelector(`input[name="language"][value="${lang}"]`).checked = true;
+            };
 
-                // --- VAPI Event Listeners ---
+            const applyTheme = (theme) => {
+                if (theme === 'system') theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+            };
+            
+            const setTheme = (theme) => {
+                applyTheme(theme);
+                localStorage.setItem('theme', theme);
+                document.querySelector(`input[name="theme"][value="${theme}"]`).checked = true;
+            };
+
+            document.getElementById('settings-button').addEventListener('click', () => document.getElementById('settings-panel').classList.remove('hidden'));
+            document.getElementById('close-settings-button').addEventListener('click', () => document.getElementById('settings-panel').classList.add('hidden'));
+            document.querySelectorAll('input[name="theme"]').forEach(r => r.addEventListener('change', (e) => setTheme(e.target.value)));
+            document.querySelectorAll('input[name="language"]').forEach(r => r.addEventListener('change', (e) => setLanguage(e.target.value)));
+            
+            // Load saved settings and custom greeting
+            const savedGreeting = localStorage.getItem('customGreeting');
+            if (savedGreeting) subtitleElement.textContent = savedGreeting;
+            
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            setTheme(savedTheme);
+            const savedLang = localStorage.getItem('language') || 'en';
+            setLanguage(savedLang);
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (localStorage.getItem('theme') === 'system') applyTheme('system');
+            });
+
+            window.addEventListener('vapi.ready', () => {
+                const vapi = window.vapi;
                 vapi.on('call-start', () => {
-                    console.log('VAPI Event: call-start');
-                    setStatus('Listening...', 'status-active');
+                    conversationHistory = [];
+                    document.getElementById('gemini-section').classList.add('hidden');
+                    document.getElementById('vapi-arrow-pointer').classList.add('hidden');
                 });
-
+                vapi.on('message', (msg) => {
+                    if (msg.role && msg.transcript) conversationHistory.push({ role: msg.role, text: msg.transcript });
+                });
                 vapi.on('call-end', () => {
-                    console.log('VAPI Event: call-end');
-                    stopCall(); // Reset UI when call ends
+                    if (conversationHistory.length > 0) document.getElementById('gemini-section').classList.remove('hidden');
+                    document.getElementById('vapi-arrow-pointer').classList.remove('hidden');
                 });
+            });
 
-                vapi.on('speech-start', () => {
-                    console.log('VAPI Event: speech-start');
-                    setStatus('Assistant is speaking...', 'status-active');
-                });
+            const summaryModal = document.getElementById('summary-modal');
+            document.getElementById('gemini-summary-button').addEventListener('click', () => {
+                summaryModal.classList.remove('modal-hidden');
+                showLoadingSpinner('summary-output');
+                document.getElementById('quick-actions-buttons').innerHTML = '';
+                getSummaryAndActions(conversationHistory);
+            });
+            document.getElementById('close-modal-button').addEventListener('click', () => summaryModal.classList.add('modal-hidden'));
+            summaryModal.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-backdrop')) summaryModal.classList.add('modal-hidden');
+            });
 
-                vapi.on('speech-end', () => {
-                    console.log('VAPI Event: speech-end');
-                    setStatus('Listening...', 'status-active');
+            function showLoadingSpinner(elementId) {
+                document.getElementById(elementId).innerHTML = `<div class="flex justify-center items-center h-full"><div class="spinner w-10 h-10 border-4 border-gray-600 dark:border-gray-700 rounded-full"></div></div>`;
+            }
+
+            async function makeGeminiCall(payload) {
+                let retries = 3, delay = 1000;
+                while (retries > 0) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                        return await response.json();
+                    } catch (error) {
+                        retries--;
+                        if (retries <= 0) throw error;
+                        await new Promise(res => setTimeout(res, delay));
+                        delay *= 2;
+                    }
+                }
+            }
+            
+            async function getSummaryAndActions(history) {
+                const formattedTranscript = history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.text}`).join('\n');
+                const summaryPayload = { systemInstruction: { parts: [{ text: "Summarize the key findings from this transcript in a concise paragraph." }] }, contents: [{ parts: [{ text: formattedTranscript }] }], };
+                const actionsPayload = { systemInstruction: { parts: [{ text: "Analyze the transcript. Return a JSON array of up to 3 objects, each with 'label' (button text) and 'query' (Google search term). If no actions, return []." }] }, contents: [{ parts: [{ text: formattedTranscript }] }], generationConfig: { responseMimeType: "application/json", responseSchema: { type: "ARRAY", items: { type: "OBJECT", properties: { label: { type: "STRING" }, query: { type: "STRING" } }, required: ["label", "query"] } } } };
+
+                try {
+                    const [summaryResult, actionsResult] = await Promise.all([ makeGeminiCall(summaryPayload), makeGeminiCall(actionsPayload) ]);
+                    originalSummary = summaryResult.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate summary.';
+                    document.getElementById('summary-output').innerHTML = originalSummary.replace(/\n/g, '<br>');
+
+                    const actions = JSON.parse(actionsResult.candidates?.[0]?.content?.parts?.[0]?.text || '[]');
+                    const actionsContainer = document.getElementById('quick-actions-buttons');
+                    actionsContainer.innerHTML = '';
+                    if (actions.length > 0) {
+                        actions.forEach(action => {
+                            const button = Object.assign(document.createElement('button'), {
+                                className: "bg-gray-700 hover:bg-teal-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors",
+                                textContent: `✨ ${action.label}`,
+                                onclick: () => window.open(`https://www.google.com/search?q=${encodeURIComponent(action.query)}`, '_blank')
+                            });
+                            actionsContainer.appendChild(button);
+                        });
+                    } else {
+                       actionsContainer.innerHTML = `<p class="text-sm text-gray-500" data-lang="no_actions">No specific actions suggested.</p>`;
+                       setLanguage(localStorage.getItem('language') || 'en');
+                    }
+                } catch (error) {
+                    console.error('Error getting summary/actions:', error);
+                    document.getElementById('summary-output').textContent = `An error occurred.`;
+                }
+            }
+            
+            document.querySelectorAll('.translate-button').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const langCode = e.target.getAttribute('data-lang-code'), langName = { en: 'English', te: 'Telugu', hi: 'Hindi'}[langCode];
+                    document.querySelectorAll('.translate-button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    if (langCode === 'en') {
+                        document.getElementById('summary-output').innerHTML = originalSummary.replace(/\n/g, '<br>');
+                        return;
+                    }
+                    showLoadingSpinner('summary-output');
+                    const translatePayload = { systemInstruction: { parts: [{ text: `Translate the following text into ${langName}. Respond ONLY with the translated text.` }] }, contents: [{ parts: [{ text: originalSummary }] }] };
+                    try {
+                        const result = await makeGeminiCall(translatePayload);
+                        const translatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                        document.getElementById('summary-output').innerHTML = (translatedText || 'Translation failed.').replace(/\n/g, '<br>');
+                    } catch (error) {
+                        console.error('Translation error:', error);
+                        document.getElementById('summary-output').textContent = 'An error occurred during translation.';
+                    }
                 });
-                
-                vapi.on('error', (e) => {
-                    console.error('VAPI Event: error', e);
-                    setStatus('Error occurred', 'status-error');
-                    isCalling = false; // Reset state on error
-                    updateButton('Start Call', 'bg-indigo-600', 'hover:bg-indigo-700');
-                });
+            });
+
+            // --- NEW: Generate Greeting Logic ---
+            const generateGreetingBtn = document.getElementById('generate-greeting-button');
+            generateGreetingBtn.addEventListener('click', async () => {
+                const topic = greetingTopicInput.value.trim();
+                if (!topic) return;
+
+                const originalBtnText = generateGreetingBtn.textContent;
+                generateGreetingBtn.disabled = true;
+                generateGreetingBtn.innerHTML = `<div class="spinner w-5 h-5 mx-auto"></div>`;
+
+                const payload = {
+                    systemInstruction: { parts: [{ text: "You create short, friendly, one-sentence welcome messages for a voice AI assistant. The message should be based on the user's topic. Be creative and concise. Respond ONLY with the message." }] },
+                    contents: [{ parts: [{ text: `Topic: ${topic}` }] }],
+                };
+
+                try {
+                    const result = await makeGeminiCall(payload);
+                    const newGreeting = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if(newGreeting) {
+                        subtitleElement.textContent = newGreeting;
+                        localStorage.setItem('customGreeting', newGreeting);
+                    }
+                } catch (error) {
+                    console.error('Greeting generation error:', error);
+                    // Optionally show an error to the user
+                } finally {
+                    generateGreetingBtn.disabled = false;
+                    generateGreetingBtn.textContent = originalBtnText;
+                    greetingTopicInput.value = '';
+                }
             });
         });
     </script>
