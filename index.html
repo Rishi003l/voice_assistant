@@ -1,452 +1,1121 @@
 <!DOCTYPE html>
-<html lang="en" class="dark"> <!-- Default to dark mode -->
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Assistant</title>
-    <!-- Tailwind CSS for styling -->
+    <title data-i18n="title">Cyberspace AI Hub</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        // Tailwind config to enable dark mode via class
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
+        /* Base Cyberpunk Styles */
         body {
             font-family: 'Inter', sans-serif;
-            /* Light and Dark mode background colors */
-            @apply bg-white dark:bg-black text-gray-900 dark:text-white;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(-45deg, #ffffff, #e5e7eb, #ffffff, #f3f4f6);
-            background-size: 400% 400%;
-            animation: gradient-light 15s ease infinite;
+            background-color: #000000;
+            color: #E0F2F1; /* Light text for contrast */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            position: relative;
+            min-height: 100vh;
         }
 
-        .dark .gradient-bg {
-            background: linear-gradient(-45deg, #000000, #111827, #000000, #1f2937);
-            background-size: 400% 400%;
-            animation: gradient-dark 15s ease infinite;
-        }
-        
-        @keyframes gradient-light {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes gradient-dark {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Neon Teal Color Definition */
+        .text-neon-teal { color: #14B8A6; }
+        .bg-neon-teal { background-color: #14B8A6; }
+        .border-neon-teal { border-color: #14B8A6; }
+
+        /* Neon Glow Effects */
+        .text-neon-glow {
+            text-shadow: 0 0 5px #14B8A6, 0 0 10px rgba(20, 184, 166, 0.7);
         }
 
-        .content-card {
-             @apply bg-gray-100/50 dark:bg-gray-900/50 backdrop-blur-xl border border-gray-200 dark:border-gray-800;
+        /* Glowing Card/Container */
+        .glow-card {
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.4);
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        .glow-card:hover {
+            box-shadow: 0 0 30px rgba(20, 184, 166, 0.7);
+            transform: translateY(-2px);
+        }
+        .glow-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #14B8A6;
+        }
+        .glow-button:hover {
+            box-shadow: 0 0 20px #14B8A6, 0 0 30px rgba(20, 184, 166, 0.5);
+            transform: scale(1.05);
         }
 
-        @keyframes bounce-arrow {
-            0%, 100% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(5px) translateY(5px); }
+        /* Subtly Animated Background (Matrix/Grid Effect) */
+        .background-matrix::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(20, 184, 166, 0.08) 0%, rgba(0, 0, 0, 1) 70%);
+            opacity: 0.3;
+            animation: moveGradient 20s infinite linear;
+            z-index: -2;
+        }
+        @keyframes moveGradient {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
         }
 
-        .animate-bounce-arrow {
-            animation: bounce-arrow 2s infinite;
-        }
-        
-        @keyframes bounce-arrow-diag {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(10px, 10px); }
+        /* Particle/Noise Effect (Optional but enhances cyber look) */
+        .background-matrix::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAG0lEQVQYV2NkYGD4z8DAwMgAAkYGRjD/AwBqAwC6BgfK5m47gAAAAABJRU5ErkJggg==') repeat;
+            opacity: 0.05;
+            z-index: -1;
         }
 
-        .animate-bounce-arrow-diag {
-            animation: bounce-arrow-diag 2s infinite;
-        }
-
+        /* Modal backdrop for immersive feel */
         .modal-backdrop {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-        }
-        .modal-hidden {
-            pointer-events: none;
-        }
-        .modal-hidden .modal-backdrop {
-            opacity: 0;
-        }
-        .modal-hidden .modal-content {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        .spinner {
-            border-top-color: #14B8A6;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        /* Custom styles for radio buttons */
-        .theme-radio:checked + label, .lang-radio:checked + label {
-            @apply bg-teal-600 border-teal-500 text-white;
-        }
-        .translate-button.active {
-             @apply bg-teal-600 text-white;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
         }
 
-        /* NEW: Glowing animation for settings icon */
-        @keyframes glow-icon {
-            0%, 100% {
-                filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.6));
-            }
-            50% {
-                filter: drop-shadow(0 0 8px rgba(20, 184, 166, 1));
-            }
+        /* VAPI Toggle Button Styling */
+        #vapi-toggle-fixed {
+            position: fixed;
+            bottom: 6rem; /* Above VAPI widget */
+            right: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #14B8A6;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 15px #14B8A6;
+            animation: pulse 1.5s infinite;
         }
 
-        #settings-button {
-            animation: glow-icon 3s ease-in-out infinite;
-        }
-
-        /* NEW: Glowing animation for title text */
-        @keyframes glow-text {
-            0%, 100% {
-                text-shadow: 0 0 5px rgba(20, 184, 166, 0.5), 0 0 10px rgba(20, 184, 166, 0.3);
-            }
-            50% {
-                text-shadow: 0 0 10px rgba(20, 184, 166, 0.8), 0 0 20px rgba(20, 184, 166, 0.5);
-            }
-        }
-
-        .glowing-title {
-            animation: glow-text 3s ease-in-out infinite;
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px #14B8A6; }
+            50% { transform: scale(1.1); box-shadow: 0 0 25px #14B8A6; }
+            100% { transform: scale(1); box-shadow: 0 0 15px #14B8A6; }
         }
     </style>
 </head>
-<body class="gradient-bg flex items-center justify-center min-h-screen p-4 overflow-hidden">
+<body class="background-matrix">
 
-    <div class="content-card rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center relative">
-        <button id="settings-button" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        </button>
-
-        <div class="mb-6">
-            <h1 data-lang="title" class="glowing-title text-4xl font-bold">AI Voice Assistant</h1>
-            <p data-lang="subtitle" class="text-gray-500 dark:text-gray-400 mt-3 text-lg">Your intelligent companion is ready to talk.</p>
-        </div>
-        
-        <div class="mt-8 text-left space-y-3 bg-gray-200/50 dark:bg-gray-800/50 p-4 rounded-lg">
-            <p data-lang="features_title" class="text-center font-semibold mb-3">Features Included</p>
-            <div class="flex items-center space-x-3 text-sm">
-                <span class="text-teal-500">✓</span>
-                <span data-lang="feature_voice">Real-time Voice Conversations</span>
+    <!-- Header / Persistent Navigation -->
+    <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b border-neon-teal/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="text-3xl font-extrabold text-neon-teal text-neon-glow" data-i18n="header_title">
+                CYBERSPACE AI HUB
             </div>
-            <div class="flex items-center space-x-3 text-sm">
-                <span class="text-teal-500">✓</span>
-                <span data-lang="feature_summary">✨ Gemini-Powered Summaries</span>
-            </div>
-             <div class="flex items-center space-x-3 text-sm">
-                <span class="text-teal-500">✓</span>
-                <span data-lang="feature_actions">✨ AI-Suggested Quick Actions</span>
-            </div>
-            <div class="flex items-center space-x-3 text-sm">
-                <span class="text-teal-500">✓</span>
-                <span data-lang="feature_themes">Customizable Themes & Languages</span>
+            <div class="flex items-center space-x-4">
+                <!-- Language Selector -->
+                <select id="language-select" onchange="switchLanguage(this.value)" class="bg-black text-neon-teal border border-neon-teal/50 rounded-md p-2 focus:ring-0 focus:border-neon-teal">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="te">తెలుగు</option>
+                </select>
+                <!-- Settings Button (Placeholder for modal) -->
+                <button onclick="toggleModal('settings-modal')" class="p-2 rounded-full text-neon-teal hover:bg-neon-teal/20 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
             </div>
         </div>
+    </header>
 
-        <div id="gemini-section" class="mt-8 hidden">
-            <button id="gemini-summary-button" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all duration-300">
-                <span data-lang="summary_button">✨ View Conversation Summary</span>
-            </button>
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 1: Main Hub View (Updated to match image) -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="main-hub-view" class="view">
+            <div class="text-center mb-12">
+                <h1 class="text-6xl md:text-7xl font-black mb-4 text-white text-neon-glow leading-tight" data-i18n="hero_title">
+                    Talk with AI. Instant, Global,<br class="hidden sm:block"> Voice-Enabled.
+                </h1>
+                <p class="text-lg text-white/80 font-light max-w-2xl mx-auto mb-10" data-i18n="hero_subtitle">
+                    Experience the future of interaction with our multimodal, voice-powered agent. Click the microphone button in the top corner to start the conversation.
+                </p>
+
+                <!-- CTA Buttons (Matching the image) -->
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-20">
+                    <button onclick="toggleVapi()" class="glow-button px-8 py-3 bg-white/10 text-white rounded-full font-bold hover:bg-neon-teal/20 transition duration-300">
+                        <span data-i18n="btn_toggle">Use Fixed AI Toggle</span>
+                    </button>
+                    <button onclick="switchView('brainstorm-view')" class="glow-button px-8 py-3 bg-pink-600/50 text-white rounded-full font-bold hover:bg-pink-600/70 transition duration-300">
+                        <span data-i18n="btn_brainstorm">AI Brainstorm Ideas</span>
+                    </button>
+                    <button onclick="switchView('query-view')" class="glow-button px-8 py-3 bg-purple-600/50 text-white rounded-full font-bold hover:bg-purple-600/70 transition duration-300">
+                        <span data-i18n="btn_multimodal">Multimodal Query 🧬</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Health & Stats Header -->
+            <h2 class="text-center text-3xl font-bold mb-8 text-white text-neon-glow" data-i18n="stats_header">System Health & Stats</h2>
+
+            <!-- System Status Grid (Updated to match image) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
+                <div class="p-4 rounded-xl glow-card text-center">
+                    <p class="text-lg opacity-75" data-i18n="stat_vapi_label">VAPI Status</p>
+                    <p class="text-4xl font-bold text-green-400 text-neon-glow" id="hub-status" data-i18n="stat_vapi_value">LIVE</p>
+                </div>
+                <div class="p-4 rounded-xl glow-card text-center">
+                    <p class="text-lg opacity-75" data-i18n="stat_uptime_label">Uptime</p>
+                    <p class="text-4xl font-bold text-neon-teal" data-i18n="stat_uptime_value">99.9%</p>
+                </div>
+                <div class="p-4 rounded-xl glow-card text-center">
+                    <p class="text-lg opacity-75" data-i18n="stat_model_label">Model</p>
+                    <p class="text-4xl font-bold text-neon-teal" data-i18n="stat_model_value">Gemini 2.5</p>
+                </div>
+                <div class="p-4 rounded-xl glow-card text-center">
+                    <p class="text-lg opacity-75" data-i18n="stat_latency_label">Latency</p>
+                    <p class="text-4xl font-bold text-neon-teal" data-i18n="stat_latency_value">~200ms</p>
+                </div>
+            </div>
+
+            <!-- Key Capabilities Header -->
+            <h2 class="text-center text-3xl font-bold mb-8 text-white text-neon-glow" data-i18n="capabilities_header">Key Capabilities</h2>
+
+            <!-- Key Capabilities Grid (Matching the image) -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1: Real-Time Voice -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_voice_title">Real-Time Voice</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_voice_desc">Engage in fully natural conversations, seamlessly looking for answers or acting like a human.</p>
+                </div>
+                <!-- Card 2: Multi-Language -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_lang_title">Multi-Language</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_lang_desc">Supports multiple global languages, enabling truly multilingual communication.</p>
+                </div>
+                <!-- Card 3: Voice + Chat Modes -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_modes_title">Voice + Chat Modes</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_modes_desc">Instantly switch between voice input and text chat within the same interface.</p>
+                </div>
+                <!-- Card 4: Live Transcript -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_transcript_title">Live Transcript</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_transcript_desc">View a real-time transcript of your conversation for clarity and record keeping.</p>
+                </div>
+                <!-- Card 5: Futuristic Design -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_design_title">Futuristic Design</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_design_desc">Enjoy a sleek, dark cyberpunk UI with neon glows, highlights and smooth animations.</p>
+                </div>
+                <!-- Card 6: Fully Responsive -->
+                <div class="p-6 rounded-xl glow-card">
+                    <h3 class="text-2xl font-bold mb-2 text-neon-teal" data-i18n="cap_responsive_title">Fully Responsive</h3>
+                    <p class="text-sm opacity-80" data-i18n="cap_responsive_desc">Optimized for flawless viewing and interaction on all devices, from mobile to desktop.</p>
+                </div>
+            </div>
         </div>
-        
-        <div id="settings-panel" class="hidden absolute inset-0 bg-gray-100 dark:bg-gray-900 p-8 rounded-2xl text-left transition-opacity duration-300 overflow-y-auto">
-             <button id="close-settings-button" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-teal-500 dark:hover:text-teal-400 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 data-lang="settings_title" class="text-2xl font-bold mb-6">Settings</h2>
-            <div class="mb-6">
-                <h3 data-lang="theme_title" class="text-lg font-semibold mb-3">Theme</h3>
-                <div class="flex space-x-2">
-                    <input type="radio" id="theme-light" name="theme" value="light" class="hidden theme-radio">
-                    <label for="theme-light" data-lang="theme_light" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">Light</label>
-                    <input type="radio" id="theme-dark" name="theme" value="dark" class="hidden theme-radio">
-                    <label for="theme-dark" data-lang="theme_dark" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">Dark</label>
-                    <input type="radio" id="theme-system" name="theme" value="system" class="hidden theme-radio">
-                    <label for="theme-system" data-lang="theme_system" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">System</label>
+
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 2: Brainstorm View -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="brainstorm-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-neon-teal text-neon-glow" data-i18n="brain_header">IDEA MATRIX BRAINSTORM</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <p class="mb-4 text-white/80" data-i18n="brain_prompt">Enter a topic to generate three creative concepts:</p>
+                <form onsubmit="handleBrainstorm(event)" id="brainstorm-form">
+                    <input type="text" id="brainstorm-input" required class="w-full p-3 mb-4 rounded-md bg-black border border-neon-teal/50 text-white focus:outline-none focus:ring-2 focus:ring-neon-teal" placeholder="e.g., A novel concept for renewable energy storage" data-i18n-placeholder="brain_placeholder">
+                    <button type="submit" class="glow-button w-full bg-neon-teal text-black font-bold py-3 rounded-md hover:bg-neon-teal/80 transition duration-300" data-i18n="brain_submit">GENERATE CONCEPTS</button>
+                </form>
+
+                <div id="brainstorm-output-container" class="mt-8 pt-4 border-t border-neon-teal/50">
+                    <p class="text-white/60 text-center" id="brainstorm-status" data-i18n="brain_waiting">Awaiting Input...</p>
+                    <div id="brainstorm-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- AI Generated list will go here -->
+                    </div>
                 </div>
             </div>
-            <div class="mb-6">
-                <h3 data-lang="language_title" class="text-lg font-semibold mb-3">Language</h3>
-                <div class="flex space-x-2">
-                     <input type="radio" id="lang-en" name="language" value="en" class="hidden lang-radio">
-                    <label for="lang-en" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">English</label>
-                     <input type="radio" id="lang-te" name="language" value="te" class="hidden lang-radio">
-                    <label for="lang-te" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">తెలుగు</label>
-                     <input type="radio" id="lang-hi" name="language" value="hi" class="hidden lang-radio">
-                    <label for="lang-hi" class="flex-1 text-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors">हिन्दी</label>
+        </div>
+
+        <!-- ------------------------------------------------------------------------------------ -->
+        <!-- VIEW 3: Query View / Command Center -->
+        <!-- ------------------------------------------------------------------------------------ -->
+        <div id="query-view" class="view hidden">
+            <button onclick="switchView('main-hub-view')" class="glow-button px-4 py-2 mb-8 bg-neon-teal/20 text-neon-teal rounded-full text-sm hover:bg-neon-teal/50" data-i18n="btn_home">← RETURN TO HUB</button>
+            <h1 class="text-4xl font-bold mb-6 text-neon-teal text-neon-glow" data-i18n="query_header">CORE COMMAND CENTER</h1>
+
+            <div class="glow-card p-6 rounded-xl">
+                <form onsubmit="handleCommandCenter(event)" id="query-form">
+                    <!-- Mode Selector -->
+                    <div class="mb-4 flex space-x-4">
+                        <label class="text-white/80" data-i18n="query_mode_label">Select Mode:</label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="query_mode" value="general" checked class="form-radio text-neon-teal bg-black border-neon-teal/50 focus:ring-neon-teal">
+                            <span class="ml-2 text-white" data-i18n="query_mode_general">General Analysis</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="query_mode" value="code" class="form-radio text-neon-teal bg-black border-neon-teal/50 focus:ring-neon-teal">
+                            <span class="ml-2 text-white" data-i18n="query_mode_code">Code Snippet</span>
+                        </label>
+                    </div>
+
+                    <!-- Text Input -->
+                    <textarea id="query-input-text" required rows="3" class="w-full p-3 mb-4 rounded-md bg-black border border-neon-teal/50 text-white focus:outline-none focus:ring-2 focus:ring-neon-teal" placeholder="Enter your command (e.g., Explain quantum computing, or Write a Python function for a quicksort)." data-i18n-placeholder="query_text_placeholder"></textarea>
+
+                    <!-- Image Input -->
+                    <label for="query-input-image" class="block mb-2 text-white/80" data-i18n="query_image_label">Upload Image (Optional for multimodal analysis):</label>
+                    <input type="file" id="query-input-image" accept="image/*" class="w-full p-2 mb-4 rounded-md bg-black border border-neon-teal/50 text-white/70 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neon-teal file:text-black hover:file:bg-neon-teal/80">
+
+                    <button type="submit" class="glow-button w-full bg-neon-teal text-black font-bold py-3 rounded-md hover:bg-neon-teal/80 transition duration-300" data-i18n="query_submit">EXECUTE COMMAND</button>
+                </form>
+
+                <div id="query-output-container" class="mt-8 pt-4 border-t border-neon-teal/50">
+                    <p class="text-white/60 text-center" id="query-status" data-i18n="query_waiting">Awaiting Command Execution...</p>
+
+                    <!-- TTS Button -->
+                    <div id="tts-controls" class="hidden flex justify-end mb-4">
+                        <button onclick="handleTTS()" id="tts-button" class="flex items-center px-3 py-1 bg-neon-teal/20 text-neon-teal rounded-full text-sm glow-button hover:bg-neon-teal/50 transition duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.899a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586L9 5.586A1 1 0 0110 6v12a1 1 0 01-1 1l-3.414-3.414z" /></svg>
+                            <span data-i18n="query_tts_read">Read Aloud 🔊</span>
+                        </button>
+                        <audio id="tts-audio" class="hidden" controls></audio>
+                    </div>
+
+                    <!-- AI Output -->
+                    <div id="query-output" class="prose prose-invert max-w-none text-white mt-4">
+                        <!-- AI Generated content, code block, or grounding citations will go here -->
+                    </div>
                 </div>
             </div>
-            <!-- NEW: AI Greeting Feature -->
-            <div>
-                <h3 data-lang="greeting_title" class="text-lg font-semibold mb-3">✨ Customize Greeting</h3>
-                <div class="flex flex-col space-y-2">
-                    <input type="text" id="greeting-topic-input" data-lang-placeholder="greeting_placeholder" placeholder="Enter a topic (e.g., 'space')" class="w-full bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none transition-colors">
-                    <button id="generate-greeting-button" data-lang="greeting_button" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg transition-colors disabled:bg-gray-500">Generate</button>
+        </div>
+    </main>
+
+    <!-- ------------------------------------------------------------------------------------ -->
+    <!-- SETTINGS MODAL -->
+    <!-- ------------------------------------------------------------------------------------ -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-4">
+        <div class="glow-card p-6 w-full max-w-lg rounded-xl">
+            <h2 class="text-3xl font-bold mb-4 text-neon-teal text-neon-glow" data-i18n="settings_title">SYSTEM SETTINGS</h2>
+            <div class="space-y-4">
+                <div class="p-4 bg-black/50 rounded-lg border border-neon-teal/20">
+                    <h3 class="font-semibold text-white mb-2" data-i18n="settings_source_code">HTML Source Code Utility</h3>
+                    <p class="text-sm text-white/70 mb-3" data-i18n="settings_source_desc">Copy the complete source code of this application to your clipboard.</p>
+                    <button onclick="copySourceCode()" class="glow-button w-full bg-gray-800 text-neon-teal font-bold py-2 rounded-md hover:bg-gray-700 transition duration-300 mb-2">
+                        <span id="copy-btn-text" data-i18n="settings_copy_btn">COPY HTML SOURCE TO CLIPBOARD</span>
+                    </button>
+                    <!-- NEW DOWNLOAD BUTTON -->
+                    <button onclick="downloadSourceCode()" class="glow-button w-full bg-neon-teal/80 text-black font-bold py-2 rounded-md hover:bg-neon-teal transition duration-300">
+                        <span data-i18n="settings_download_btn">DOWNLOAD WEBSITE FILE</span>
+                    </button>
+                </div>
+
+                <div class="p-4 bg-black/50 rounded-lg border border-neon-teal/20">
+                    <h3 class="font-semibold text-white mb-2" data-i18n="settings_key_info">API Key Information</h3>
+                    <p class="text-sm text-white/70" data-i18n="settings_key_desc">All AI functions are powered by the **Gemini API**. The key is handled securely by the canvas environment.</p>
                 </div>
             </div>
+            <button onclick="toggleModal('settings-modal')" class="mt-6 w-full py-2 bg-red-800/50 text-white rounded-md hover:bg-red-800 transition duration-300" data-i18n="settings_close">CLOSE INTERFACE</button>
         </div>
     </div>
-    
-    <div id="summary-modal" class="modal-hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="modal-backdrop fixed inset-0 bg-black/70"></div>
-        <div class="modal-content bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-2xl w-full relative">
-            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors text-3xl leading-none">&times;</button>
-            <div class="flex justify-between items-center mb-4">
-                <h2 data-lang="summary_modal_title" class="text-2xl font-bold text-white">Conversation Summary</h2>
-                <div id="translate-buttons" class="flex space-x-2">
-                    <button data-lang-code="en" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors active">EN</button>
-                    <button data-lang-code="te" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors">తె</button>
-                    <button data-lang-code="hi" class="translate-button px-3 py-1 text-sm border border-gray-600 rounded-md hover:bg-teal-700 transition-colors">हिं</button>
-                </div>
-            </div>
-            <div id="summary-output" class="bg-gray-900/50 rounded-lg p-4 min-h-[150px] text-left text-gray-300 prose prose-invert max-w-none"></div>
-            <div id="quick-actions-container" class="mt-6">
-                <h3 data-lang="actions_title" class="text-lg font-semibold text-white mb-3">Suggested Actions</h3>
-                <div id="quick-actions-buttons" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
-    </div>
 
-    <div id="vapi-arrow-pointer" class="fixed bottom-32 right-32 text-teal-600 dark:text-teal-300 animate-bounce-arrow-diag z-40 pointer-events-none">
-        <span data-lang="click_here" class="absolute -top-8 -left-12 text-lg font-medium whitespace-nowrap">Click Here!</span>
-        <svg class="w-12 h-12" style="transform: rotate(45deg);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-    </div>
 
+    <!-- ------------------------------------------------------------------------------------ -->
+    <!-- VAPI WIDGET INTEGRATION (Required at bottom of body) -->
+    <!-- ------------------------------------------------------------------------------------ -->
     <vapi-widget
-      public-key="b7e0c1dd-df9e-4c64-a99e-000cd099f30d"
-      assistant-id="058f5c02-6154-4277-8bf6-3db5b02e064c"
+        public-key="b7e0c1dd-df9e-4c64-a99e-000cd099f30d"
+        assistant-id="058f5c02-6154-4277-8bf6-3db5b02e064c"
+        mode="voice"
+        theme="dark"
+        base-bg-color="#000000"
+        accent-color="#14B8A6"
+        cta-button-color="#000000"
+        cta-button-text-color="#ffffff"
+        border-radius="large"
+        size="full"
+        position="bottom-right"
+        title="TALK WITH AI"
+        start-button-text="Start"
+        end-button-text="End Call"
+        chat-first-message="Hey, How can I help you today?"
+        chat-placeholder="Type your message..."
+        voice-show-transcript="true"
+        consent-required="true"
+        consent-title="Terms and conditions"
+        consent-content="By clicking 'Agree,' and each time I interact with this AI agent, I consent to the recording, storage, and sharing of my communications with third-party service providers, and as otherwise described in our Terms of Service."
+        consent-storage-key="vapi_widget_consent"
     ></vapi-widget>
-
+    <!-- VAPI Script -->
     <script src="https://unpkg.com/@vapi-ai/client-sdk-react/dist/embed/widget.umd.js" async type="text/javascript"></script>
 
+    <!-- Fixed VAPI Toggle Button -->
+    <div id="vapi-toggle-fixed" onclick="toggleVapi()">
+        <span id="vapi-toggle-icon">TALK</span>
+    </div>
+
+    <!-- ------------------------------------------------------------------------------------ -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ------------------------------------------------------------------------------------ -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let conversationHistory = [];
-            let originalSummary = '';
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const API_KEY = ""; // Placeholder, key is supplied by the canvas environment
+        const API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
-            const translations = {
-                en: {
-                    title: "AI Voice Assistant", subtitle: "Your intelligent companion is ready to talk.", summary_button: "✨ View Conversation Summary", summary_modal_title: "Conversation Summary", click_here: "Click Here!", settings_title: "Settings", theme_title: "Theme", theme_light: "Light", theme_dark: "Dark", theme_system: "System", language_title: "Language", features_title: "Features Included", feature_voice: "Real-time Voice Conversations", feature_summary: "✨ Gemini-Powered Summaries", feature_actions: "✨ AI-Suggested Quick Actions", feature_themes: "Customizable Themes & Languages", actions_title: "Suggested Actions", greeting_title: "✨ Customize Greeting", greeting_placeholder: "Enter a topic (e.g., 'space')", greeting_button: "Generate"
-                },
-                te: {
-                    title: "AI వాయిస్ అసిస్టెంట్", subtitle: "మీ తెలివైన సహచరుడు మాట్లాడటానికి సిద్ధంగా ఉన్నాడు.", summary_button: "✨ సంభాషణ సారాంశం చూడండి", summary_modal_title: "సంభాషణ సారాంశం", click_here: "ఇక్కడ క్లిక్ చేయండి!", settings_title: "సెట్టింగ్‌లు", theme_title: "థీమ్", theme_light: "లైట్", theme_dark: "డార్క్", theme_system: "సిస్టమ్", language_title: "భాష", features_title: "ఫీచర్లు ఉన్నాయి", feature_voice: "నిజ-సమయ వాయిస్ సంభాషణలు", feature_summary: "✨ జెమిని-ఆధారిత సారాంశాలు", feature_actions: "✨ AI-సూచించిన త్వరిత చర్యలు", feature_themes: "అనుకూలీకరించదగిన థీమ్‌లు & భాషలు", actions_title: "సూచించిన చర్యలు", greeting_title: "✨ గ్రీటింగ్‌ని అనుకూలీకరించండి", greeting_placeholder: "ఒక అంశాన్ని నమోదు చేయండి (ఉదా., 'స్పేస్')", greeting_button: "సృష్టించు"
-                },
-                hi: {
-                    title: "एआई वॉयस असिस्टेंट", subtitle: "आपका बुद्धिमान साथी बात करने के लिए तैयार है।", summary_button: "✨ बातचीत का सारांश देखें", summary_modal_title: "बातचीत का सारांश", click_here: "यहां क्लिक करें!", settings_title: "सेटिंग्स", theme_title: "थीम", theme_light: "लाइट", theme_dark: "डार्क", theme_system: "सिस्टम", language_title: "भाषा", features_title: "विशेषताएँ शामिल हैं", feature_voice: "वास्तविक समय की वॉयस वार्तालाप", feature_summary: "✨ जेमिनी-संचालित सारांश", feature_actions: "✨ एआई-सुझाए गए त्वरित कार्य", feature_themes: "अनुकूलन योग्य थीम और भाषाएँ", actions_title: "सुझाए गए कार्य", greeting_title: "✨ अभिवादन को अनुकूलित करें", greeting_placeholder: "एक विषय दर्ज करें (उदा., 'अंतरिक्ष')", greeting_button: "उत्पन्न करें"
-                }
-            };
+        // Global state for views
+        let currentView = 'main-hub-view';
 
-            const subtitleElement = document.querySelector('[data-lang="subtitle"]');
-            const greetingTopicInput = document.getElementById('greeting-topic-input');
+        // ----------------------------------------------------------------------------
+        // 1. UTILITY FUNCTIONS (Exponential Backoff, Audio Conversion)
+        // ----------------------------------------------------------------------------
 
-            const setLanguage = (lang) => {
-                document.querySelectorAll('[data-lang]').forEach(el => {
-                    const key = el.getAttribute('data-lang');
-                    if (translations[lang]?.[key]) {
-                        // Don't overwrite custom greeting with default
-                        if(key === 'subtitle' && localStorage.getItem('customGreeting')) {
-                            subtitleElement.textContent = localStorage.getItem('customGreeting');
-                        } else {
-                            el.textContent = translations[lang][key];
-                        }
-                    }
-                });
-                document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
-                    const key = el.getAttribute('data-lang-placeholder');
-                    if (translations[lang]?.[key]) el.placeholder = translations[lang][key];
-                });
-                document.documentElement.lang = lang;
-                localStorage.setItem('language', lang);
-                document.querySelector(`input[name="language"][value="${lang}"]`).checked = true;
-            };
-
-            const applyTheme = (theme) => {
-                if (theme === 'system') theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-            };
-            
-            const setTheme = (theme) => {
-                applyTheme(theme);
-                localStorage.setItem('theme', theme);
-                document.querySelector(`input[name="theme"][value="${theme}"]`).checked = true;
-            };
-
-            document.getElementById('settings-button').addEventListener('click', () => document.getElementById('settings-panel').classList.remove('hidden'));
-            document.getElementById('close-settings-button').addEventListener('click', () => document.getElementById('settings-panel').classList.add('hidden'));
-            document.querySelectorAll('input[name="theme"]').forEach(r => r.addEventListener('change', (e) => setTheme(e.target.value)));
-            document.querySelectorAll('input[name="language"]').forEach(r => r.addEventListener('change', (e) => setLanguage(e.target.value)));
-            
-            // Load saved settings and custom greeting
-            const savedGreeting = localStorage.getItem('customGreeting');
-            if (savedGreeting) subtitleElement.textContent = savedGreeting;
-            
-            const savedTheme = localStorage.getItem('theme') || 'system';
-            setTheme(savedTheme);
-            const savedLang = localStorage.getItem('language') || 'en';
-            setLanguage(savedLang);
-
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                if (localStorage.getItem('theme') === 'system') applyTheme('system');
-            });
-
-            window.addEventListener('vapi.ready', () => {
-                const vapi = window.vapi;
-                vapi.on('call-start', () => {
-                    conversationHistory = [];
-                    document.getElementById('gemini-section').classList.add('hidden');
-                    document.getElementById('vapi-arrow-pointer').classList.add('hidden');
-                });
-                vapi.on('message', (msg) => {
-                    if (msg.role && msg.transcript) conversationHistory.push({ role: msg.role, text: msg.transcript });
-                });
-                vapi.on('call-end', () => {
-                    if (conversationHistory.length > 0) document.getElementById('gemini-section').classList.remove('hidden');
-                    document.getElementById('vapi-arrow-pointer').classList.remove('hidden');
-                });
-            });
-
-            const summaryModal = document.getElementById('summary-modal');
-            document.getElementById('gemini-summary-button').addEventListener('click', () => {
-                summaryModal.classList.remove('modal-hidden');
-                showLoadingSpinner('summary-output');
-                document.getElementById('quick-actions-buttons').innerHTML = '';
-                getSummaryAndActions(conversationHistory);
-            });
-            document.getElementById('close-modal-button').addEventListener('click', () => summaryModal.classList.add('modal-hidden'));
-            summaryModal.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal-backdrop')) summaryModal.classList.add('modal-hidden');
-            });
-
-            function showLoadingSpinner(elementId) {
-                document.getElementById(elementId).innerHTML = `<div class="flex justify-center items-center h-full"><div class="spinner w-10 h-10 border-4 border-gray-600 dark:border-gray-700 rounded-full"></div></div>`;
-            }
-
-            async function makeGeminiCall(payload) {
-                let retries = 3, delay = 1000;
-                while (retries > 0) {
-                    try {
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                        return await response.json();
-                    } catch (error) {
-                        retries--;
-                        if (retries <= 0) throw error;
-                        await new Promise(res => setTimeout(res, delay));
-                        delay *= 2;
-                    }
-                }
-            }
-            
-            async function getSummaryAndActions(history) {
-                const formattedTranscript = history.map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.text}`).join('\n');
-                const summaryPayload = { systemInstruction: { parts: [{ text: "Summarize the key findings from this transcript in a concise paragraph." }] }, contents: [{ parts: [{ text: formattedTranscript }] }], };
-                const actionsPayload = { systemInstruction: { parts: [{ text: "Analyze the transcript. Return a JSON array of up to 3 objects, each with 'label' (button text) and 'query' (Google search term). If no actions, return []." }] }, contents: [{ parts: [{ text: formattedTranscript }] }], generationConfig: { responseMimeType: "application/json", responseSchema: { type: "ARRAY", items: { type: "OBJECT", properties: { label: { type: "STRING" }, query: { type: "STRING" } }, required: ["label", "query"] } } } };
-
+        /**
+         * Fetches a resource using exponential backoff retry mechanism.
+         * @param {string} url - The URL to fetch.
+         * @param {object} options - Fetch options.
+         * @param {number} retries - Number of retries (default 3).
+         * @returns {Promise<Response>}
+         */
+        async function exponentialBackoffFetch(url, options, retries = 3) {
+            for (let i = 0; i < retries; i++) {
                 try {
-                    const [summaryResult, actionsResult] = await Promise.all([ makeGeminiCall(summaryPayload), makeGeminiCall(actionsPayload) ]);
-                    originalSummary = summaryResult.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate summary.';
-                    document.getElementById('summary-output').innerHTML = originalSummary.replace(/\n/g, '<br>');
-
-                    const actions = JSON.parse(actionsResult.candidates?.[0]?.content?.parts?.[0]?.text || '[]');
-                    const actionsContainer = document.getElementById('quick-actions-buttons');
-                    actionsContainer.innerHTML = '';
-                    if (actions.length > 0) {
-                        actions.forEach(action => {
-                            const button = Object.assign(document.createElement('button'), {
-                                className: "bg-gray-700 hover:bg-teal-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors",
-                                textContent: `✨ ${action.label}`,
-                                onclick: () => window.open(`https://www.google.com/search?q=${encodeURIComponent(action.query)}`, '_blank')
-                            });
-                            actionsContainer.appendChild(button);
-                        });
-                    } else {
-                       actionsContainer.innerHTML = `<p class="text-sm text-gray-500" data-lang="no_actions">No specific actions suggested.</p>`;
-                       setLanguage(localStorage.getItem('language') || 'en');
+                    const response = await fetch(url, options);
+                    if (response.status === 429) { // Rate limit
+                        throw new Error(`Rate limit hit (429). Retrying in ${Math.pow(2, i)}s...`);
                     }
+                    if (!response.ok) {
+                        const errorBody = await response.json().catch(() => ({}));
+                        throw new Error(`HTTP Error: ${response.status} - ${errorBody.error?.message || response.statusText}`);
+                    }
+                    return response;
                 } catch (error) {
-                    console.error('Error getting summary/actions:', error);
-                    document.getElementById('summary-output').textContent = `An error occurred.`;
+                    if (i === retries - 1) {
+                        console.error("Max retries reached. Request failed:", error);
+                        throw error;
+                    }
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    console.warn(`Attempt ${i + 1} failed: ${error.message}. Retrying in ${Math.ceil(delay / 1000)}s.`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
-            
-            document.querySelectorAll('.translate-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const langCode = e.target.getAttribute('data-lang-code'), langName = { en: 'English', te: 'Telugu', hi: 'Hindi'}[langCode];
-                    document.querySelectorAll('.translate-button').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    if (langCode === 'en') {
-                        document.getElementById('summary-output').innerHTML = originalSummary.replace(/\n/g, '<br>');
-                        return;
-                    }
-                    showLoadingSpinner('summary-output');
-                    const translatePayload = { systemInstruction: { parts: [{ text: `Translate the following text into ${langName}. Respond ONLY with the translated text.` }] }, contents: [{ parts: [{ text: originalSummary }] }] };
-                    try {
-                        const result = await makeGeminiCall(translatePayload);
-                        const translatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                        document.getElementById('summary-output').innerHTML = (translatedText || 'Translation failed.').replace(/\n/g, '<br>');
-                    } catch (error) {
-                        console.error('Translation error:', error);
-                        document.getElementById('summary-output').textContent = 'An error occurred during translation.';
-                    }
-                });
+        }
+
+        /** Converts a base64 string to an ArrayBuffer. */
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        /**
+         * Converts raw PCM 16-bit audio data (signed) into a WAV Blob.
+         * @param {Int16Array} pcm16 - Raw PCM data.
+         * @param {number} sampleRate - Sample rate (e.g., 24000).
+         * @returns {Blob} WAV file blob.
+         */
+        function pcmToWav(pcm16, sampleRate) {
+            const numChannels = 1;
+            const numSamples = pcm16.length;
+            const dataSize = numSamples * 2; // 16-bit, 2 bytes per sample
+
+            // Create ArrayBuffer for WAV file
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            let offset = 0;
+
+            // RIFF chunk
+            writeString(view, offset, 'RIFF'); offset += 4;
+            view.setUint32(offset, 36 + dataSize, true); offset += 4; // ChunkSize
+            writeString(view, offset, 'WAVE'); offset += 4;
+
+            // FMT chunk
+            writeString(view, offset, 'fmt '); offset += 4;
+            view.setUint32(offset, 16, true); offset += 4; // Subchunk1Size (16 for PCM)
+            view.setUint16(offset, 1, true); offset += 2; // AudioFormat (1 for PCM)
+            view.setUint16(offset, numChannels, true); offset += 2; // NumChannels
+            view.setUint32(offset, sampleRate, true); offset += 4; // SampleRate
+            view.setUint32(offset, sampleRate * numChannels * 2, true); offset += 4; // ByteRate
+            view.setUint16(offset, numChannels * 2, true); offset += 2; // BlockAlign
+            view.setUint16(offset, 16, true); offset += 2; // BitsPerSample (16 bit)
+
+            // DATA chunk
+            writeString(view, offset, 'data'); offset += 4;
+            view.setUint32(offset, dataSize, true); offset += 4; // Subchunk2Size
+
+            // Write PCM data
+            for (let i = 0; i < numSamples; i++, offset += 2) {
+                view.setInt16(offset, pcm16[i], true);
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+
+            function writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+        }
+
+
+        // ----------------------------------------------------------------------------
+        // 2. VIEW & MODAL MANAGEMENT
+        // ----------------------------------------------------------------------------
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.add('hidden');
             });
+            document.getElementById(viewId).classList.remove('hidden');
+            currentView = viewId;
+            window.scrollTo(0, 0); // Scroll to top on view switch
+        }
 
-            // --- NEW: Generate Greeting Logic ---
-            const generateGreetingBtn = document.getElementById('generate-greeting-button');
-            generateGreetingBtn.addEventListener('click', async () => {
-                const topic = greetingTopicInput.value.trim();
-                if (!topic) return;
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+        }
 
-                const originalBtnText = generateGreetingBtn.textContent;
-                generateGreetingBtn.disabled = true;
-                generateGreetingBtn.innerHTML = `<div class="spinner w-5 h-5 mx-auto"></div>`;
+        // ----------------------------------------------------------------------------
+        // 3. VAPI WIDGET TOGGLE
+        // ----------------------------------------------------------------------------
 
-                const payload = {
-                    systemInstruction: { parts: [{ text: "You create short, friendly, one-sentence welcome messages for a voice AI assistant. The message should be based on the user's topic. Be creative and concise. Respond ONLY with the message." }] },
-                    contents: [{ parts: [{ text: `Topic: ${topic}` }] }],
+        const VAPI_TAG_NAME = 'vapi-widget';
+
+        /**
+         * Reliably finds and returns the VAPI widget element using polling.
+         * @param {number} timeoutMs - Max time to wait.
+         * @returns {Promise<HTMLElement|null>}
+         */
+        function findVapiWidget(timeoutMs = 8000) {
+            return new Promise((resolve) => {
+                const intervalTime = 200;
+                let elapsed = 0;
+
+                const checkWidget = () => {
+                    const widget = document.querySelector(VAPI_TAG_NAME);
+                    if (widget) {
+                        return resolve(widget);
+                    }
+                    elapsed += intervalTime;
+                    if (elapsed < timeoutMs) {
+                        setTimeout(checkWidget, intervalTime);
+                    } else {
+                        console.error("VAPI widget not found within timeout.");
+                        resolve(null);
+                    }
                 };
 
-                try {
-                    const result = await makeGeminiCall(payload);
-                    const newGreeting = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if(newGreeting) {
-                        subtitleElement.textContent = newGreeting;
-                        localStorage.setItem('customGreeting', newGreeting);
-                    }
-                } catch (error) {
-                    console.error('Greeting generation error:', error);
-                    // Optionally show an error to the user
-                } finally {
-                    generateGreetingBtn.disabled = false;
-                    generateGreetingBtn.textContent = originalBtnText;
-                    greetingTopicInput.value = '';
+                checkWidget();
+            });
+        }
+
+        /** Toggles the VAPI widget's start/end call state. */
+        async function toggleVapi() {
+            const widget = await findVapiWidget();
+            const toggleIcon = document.getElementById('vapi-toggle-icon');
+
+            if (widget) {
+                // Check current state (assuming 'end' means it's running)
+                const isRunning = widget.getAttribute('state') === 'end';
+
+                if (isRunning) {
+                    widget.end();
+                    toggleIcon.textContent = 'TALK';
+                    toggleIcon.classList.remove('text-red-400');
+                    toggleIcon.classList.add('text-black');
+                    widget.style.boxShadow = '0 0 15px #14B8A6';
+                } else {
+                    widget.start();
+                    toggleIcon.textContent = 'END';
+                    toggleIcon.classList.add('text-red-400');
+                    toggleIcon.classList.remove('text-black');
+                    widget.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
+                }
+            }
+        }
+
+        // ----------------------------------------------------------------------------
+        // 4. LOCALIZATION DATA & LOGIC
+        // ----------------------------------------------------------------------------
+
+        const languageData = {
+            en: {
+                title: "Cyberspace AI Hub",
+                header_title: "CYBERSPACE AI HUB",
+                
+                // NEW HERO CONTENT
+                hero_title: "Talk with AI. Instant, Global, Voice-Enabled.",
+                hero_subtitle: "Experience the future of interaction with our multimodal, voice-powered agent. Click the microphone button in the top corner to start the conversation.",
+                btn_toggle: "Use Fixed AI Toggle",
+                btn_brainstorm: "AI Brainstorm Ideas",
+                btn_multimodal: "Multimodal Query 🧬",
+
+                // NEW STATS CONTENT
+                stats_header: "System Health & Stats",
+                stat_vapi_label: "VAPI Status",
+                stat_vapi_value: "LIVE",
+                stat_uptime_label: "Uptime",
+                stat_uptime_value: "99.9%",
+                stat_model_label: "Model",
+                stat_model_value: "Gemini 2.5",
+                stat_latency_label: "Latency",
+                stat_latency_value: "~200ms",
+
+                // NEW CAPABILITIES CONTENT
+                capabilities_header: "Key Capabilities",
+                cap_voice_title: "Real-Time Voice",
+                cap_voice_desc: "Engage in fully natural conversations, seamlessly looking for answers or acting like a human.",
+                cap_lang_title: "Multi-Language",
+                cap_lang_desc: "Supports multiple global languages, enabling truly multilingual communication.",
+                cap_modes_title: "Voice + Chat Modes",
+                cap_modes_desc: "Instantly switch between voice input and text chat within the same interface.",
+                cap_transcript_title: "Live Transcript",
+                cap_transcript_desc: "View a real-time transcript of your conversation for clarity and record keeping.",
+                cap_design_title: "Futuristic Design",
+                cap_design_desc: "Enjoy a sleek, dark cyberpunk UI with neon glows, highlights and smooth animations.",
+                cap_responsive_title: "Fully Responsive",
+                cap_responsive_desc: "Optimized for flawless viewing and interaction on all devices, from mobile to desktop.",
+
+
+                // OLD CONTENT (retained for other views)
+                btn_home: "← RETURN TO HUB",
+                brain_header: "IDEA MATRIX BRAINSTORM",
+                brain_prompt: "Enter a topic to generate three creative concepts:",
+                brain_placeholder: "e.g., A novel concept for renewable energy storage",
+                brain_submit: "GENERATE CONCEPTS",
+                brain_waiting: "Awaiting Input...",
+                query_header: "CORE COMMAND CENTER",
+                query_mode_label: "Select Mode:",
+                query_mode_general: "General Analysis",
+                query_mode_code: "Code Snippet",
+                query_text_placeholder: "Enter your command (e.g., Explain quantum computing, or Write a Python function for a quicksort).",
+                query_image_label: "Upload Image (Optional for multimodal analysis):",
+                query_submit: "EXECUTE COMMAND",
+                query_waiting: "Awaiting Command Execution...",
+                query_tts_read: "Read Aloud 🔊",
+                query_citation_header: "Grounding Sources:",
+                settings_title: "SYSTEM SETTINGS",
+                settings_source_code: "HTML Source Code Utility",
+                settings_source_desc: "Copy the complete source code of this application to your clipboard.",
+                settings_copy_btn: "COPY HTML SOURCE TO CLIPBOARD",
+                settings_download_btn: "DOWNLOAD WEBSITE FILE",
+                settings_key_info: "API Key Information",
+                settings_key_desc: "All AI functions are powered by the **Gemini API**. The key is handled securely by the canvas environment.",
+                settings_close: "CLOSE INTERFACE"
+            },
+            hi: {
+                title: "साइबरस्पेस एआई हब",
+                header_title: "साइबरस्पेस एआई हब",
+                
+                // NEW HERO CONTENT
+                hero_title: "एआई से बात करें। त्वरित, वैश्विक, वॉइस-सक्षम।",
+                hero_subtitle: "हमारे मल्टीमॉडल, वॉइस-संचालित एजेंट के साथ बातचीत के भविष्य का अनुभव करें। बातचीत शुरू करने के लिए ऊपरी कोने में माइक्रोफ़ोन बटन पर क्लिक करें।",
+                btn_toggle: "फिक्स्ड एआई टॉगल का उपयोग करें",
+                btn_brainstorm: "एआई मंथन विचार",
+                btn_multimodal: "बहुविध प्रश्न 🧬",
+
+                // NEW STATS CONTENT
+                stats_header: "सिस्टम स्वास्थ्य और आँकड़े",
+                stat_vapi_label: "वीएपीआई स्थिति",
+                stat_vapi_value: "लाइव",
+                stat_uptime_label: "अपटाइम",
+                stat_uptime_value: "99.9%",
+                stat_model_label: "मॉडल",
+                stat_model_value: "जेमिनी 2.5",
+                stat_latency_label: "विलंबता",
+                stat_latency_value: "~200ms",
+
+                // NEW CAPABILITIES CONTENT
+                capabilities_header: "मुख्य क्षमताएं",
+                cap_voice_title: "रीयल-टाइम वॉयस",
+                cap_voice_desc: "पूरी तरह से प्राकृतिक बातचीत में शामिल हों, सहजता से उत्तर खोजें या मानव की तरह कार्य करें।",
+                cap_lang_title: "बहु-भाषा",
+                cap_lang_desc: "कई वैश्विक भाषाओं का समर्थन करता है, जो वास्तव में बहुभाषी संचार को सक्षम करता है।",
+                cap_modes_title: "वॉयस + चैट मोड",
+                cap_modes_desc: "एक ही इंटरफ़ेस के भीतर तुरंत वॉयस इनपुट और टेक्स्ट चैट के बीच स्विच करें।",
+                cap_transcript_title: "लाइव प्रतिलेख",
+                cap_transcript_desc: "स्पष्टता और रिकॉर्ड रखने के लिए अपनी बातचीत का रीयल-टाइम प्रतिलेख देखें।",
+                cap_design_title: "भविष्यवादी डिजाइन",
+                cap_design_desc: "नियॉन चमक, हाइलाइट्स और सहज एनिमेशन के साथ एक चिकना, गहरा साइबरपंक यूआई का आनंद लें।",
+                cap_responsive_title: "पूरी तरह से प्रतिक्रियाशील",
+                cap_responsive_desc: "मोबाइल से डेस्कटॉप तक, सभी उपकरणों पर त्रुटिहीन देखने और बातचीत के लिए अनुकूलित।",
+
+
+                // OLD CONTENT (retained for other views)
+                btn_home: "← हब पर लौटें",
+                brain_header: "आइडिया मैट्रिक्स मंथन",
+                brain_prompt: "तीन रचनात्मक अवधारणाएँ उत्पन्न करने के लिए एक विषय दर्ज करें:",
+                brain_placeholder: "उदाहरण: अक्षय ऊर्जा भंडारण के लिए एक उपन्यास अवधारणा",
+                brain_submit: "अवधारणाएँ उत्पन्न करें",
+                brain_waiting: "इनपुट की प्रतीक्षा है...",
+                query_header: "कोर कमांड सेंटर",
+                query_mode_label: "मोड चुनें:",
+                query_mode_general: "सामान्य विश्लेषण",
+                query_mode_code: "कोड स्निपेट",
+                query_text_placeholder: "अपना कमांड दर्ज करें (उदाहरण: क्वांटम कंप्यूटिंग समझाएँ, या क्विकसॉर्ट के लिए एक पायथन फ़ंक्शन लिखें)।",
+                query_image_label: "छवि अपलोड करें (मल्टीमॉडल विश्लेषण के लिए वैकल्पिक):",
+                query_submit: "कमांड निष्पादित करें",
+                query_waiting: "कमांड निष्पादन की प्रतीक्षा है...",
+                query_tts_read: "ज़ोर से पढ़ें 🔊",
+                query_citation_header: "ग्राउंडिंग स्रोत:",
+                settings_title: "सिस्टम सेटिंग्स",
+                settings_source_code: "एचटीएमएल सोर्स कोड उपयोगिता",
+                settings_source_desc: "इस एप्लिकेशन का पूरा सोर्स कोड अपने क्लिपबोर्ड पर कॉपी करें।",
+                settings_copy_btn: "एचटीएमएल सोर्स क्लिपबोर्ड पर कॉपी करें",
+                settings_download_btn: "वेबसाइट फ़ाइल डाउनलोड करें",
+                settings_key_info: "एपीआई कुंजी जानकारी",
+                settings_key_desc: "सभी एआई फ़ंक्शन **जेमिनी एपीआई** द्वारा संचालित हैं। कुंजी को कैनवास वातावरण द्वारा सुरक्षित रूप से संभाला जाता है।",
+                settings_close: "इंटरफ़ेस बंद करें"
+            },
+            te: {
+                title: "సైబర్‌స్పేస్ AI హబ్",
+                header_title: "సైబర్‌స్పేస్ AI హబ్",
+                
+                // NEW HERO CONTENT
+                hero_title: "AIతో మాట్లాడండి. తక్షణ, ప్రపంచ, వాయిస్-ఎనేబుల్డ్.",
+                hero_subtitle: "మా మల్టీమోడల్, వాయిస్-శక్తి గల ఏజెంట్‌తో ఇంటరాక్షన్ యొక్క భవిష్యత్తును అనుభవించండి. సంభాషణను ప్రారంభించడానికి పై మూలలో ఉన్న మైక్రోఫోన్ బటన్‌ను క్లిక్ చేయండి.",
+                btn_toggle: "ఫిక్స్‌డ్ AI టోగుల్‌ను ఉపయోగించండి",
+                btn_brainstorm: "AI బ్రెయిన్‌స్టార్మ్ ఆలోచనలు",
+                btn_multimodal: "మల్టీమోడల్ ప్రశ్న 🧬",
+
+                // NEW STATS CONTENT
+                stats_header: "సిస్టమ్ ఆరోగ్యం & గణాంకాలు",
+                stat_vapi_label: "VAPI స్థితి",
+                stat_vapi_value: "లైవ్",
+                stat_uptime_label: "అప్‌టైమ్",
+                stat_uptime_value: "99.9%",
+                stat_model_label: "మోడల్",
+                stat_model_value: "జెమిని 2.5",
+                stat_latency_label: "జాప్యం",
+                stat_latency_value: "~200ms",
+
+                // NEW CAPABILITIES CONTENT
+                capabilities_header: "కీ సామర్థ్యాలు",
+                cap_voice_title: "రియల్-టైమ్ వాయిస్",
+                cap_voice_desc: "పూర్తిగా సహజమైన సంభాషణలలో పాల్గొనండి, సజావుగా సమాధానాల కోసం వెతకండి లేదా మనిషిలా వ్యవహరించండి.",
+                cap_lang_title: "బహుళ భాష",
+                cap_lang_desc: "బహుళ ప్రపంచ భాషలకు మద్దతు ఇస్తుంది, నిజమైన బహుభాషా కమ్యూనికేషన్‌ను ప్రారంభిస్తుంది.",
+                cap_modes_title: "వాయిస్ + చాట్ మోడ్‌లు",
+                cap_modes_desc: "ఒకే ఇంటర్‌ఫేస్‌లో వాయిస్ ఇన్‌పుట్ మరియు టెక్స్ట్ చాట్ మధ్య తక్షణమే మారండి.",
+                cap_transcript_title: "లైవ్ ట్రాన్స్‌క్రిప్ట్",
+                cap_transcript_desc: "స్పష్టత మరియు రికార్డు ఉంచడం కోసం మీ సంభాషణ యొక్క నిజ-సమయ ట్రాన్స్‌క్రిప్ట్‌ను వీక్షించండి.",
+                cap_design_title: "భవిష్యత్ డిజైన్",
+                cap_design_desc: "నియాన్ గ్లోస్, హైలైట్‌లు మరియు మృదువైన యానిమేషన్‌లతో సొగసైన, డార్క్ సైబర్‌పంక్ UIని ఆస్వాదించండి.",
+                cap_responsive_title: "పూర్తిగా ప్రతిస్పందించే",
+                cap_responsive_desc: "మొబైల్ నుండి డెస్క్‌టాప్ వరకు, అన్ని పరికరాల్లో దోషరహిత వీక్షణ మరియు ఇంటరాక్షన్ కోసం ఆప్టిమైజ్ చేయబడింది.",
+                
+                // OLD CONTENT (retained for other views)
+                btn_home: "← హబ్‌కు తిరిగి వెళ్లండి",
+                brain_header: "ఐడియా మ్యాట్రిక్స్ బ్రెయిన్‌స్టార్మ్",
+                brain_prompt: "మూడు సృజనాత్మక ఆలోచనలను రూపొందించడానికి ఒక అంశాన్ని నమోదు చేయండి:",
+                brain_placeholder: "ఉదా: పునరుత్పాదక ఇంధన నిల్వ కోసం ఒక కొత్త ఆలోచన",
+                brain_submit: "ఆలోచనలను రూపొందించండి",
+                brain_waiting: "ఇన్‌పుట్ కోసం వేచి ఉంది...",
+                query_header: "కోర్ కమాండ్ సెంటర్",
+                query_mode_label: "మోడ్‌ను ఎంచుకోండి:",
+                query_mode_general: "సాధారణ విశ్లేషణ",
+                query_mode_code: "కోడ్ స్నిప్పెట్",
+                query_text_placeholder: "మీ ఆదేశాన్ని నమోదు చేయండి (ఉదా: క్వాంటం కంప్యూటింగ్‌ను వివరించండి, లేదా క్విక్‌సార్ట్ కోసం పైథాన్ ఫంక్షన్‌ను రాయండి).",
+                query_image_label: "చిత్రాన్ని అప్‌లోడ్ చేయండి (మల్టీమోడల్ విశ్లేషణ కోసం ఐచ్ఛికం):",
+                query_submit: "ఆదేశాన్ని అమలు చేయండి",
+                query_waiting: "ఆదేశం అమలు కోసం వేచి ఉంది...",
+                query_tts_read: "గట్టిగా చదవండి 🔊",
+                query_citation_header: "గ్రౌండింగ్ మూలాలు:",
+                settings_title: "సిస్టమ్ సెట్టింగ్‌లు",
+                settings_source_code: "HTML సోర్స్ కోడ్ యుటిలిటీ",
+                settings_source_desc: "ఈ అప్లికేషన్ యొక్క పూర్తి సోర్స్ కోడ్‌ను మీ క్లిప్‌బోర్డ్‌కు కాపీ చేయండి.",
+                settings_copy_btn: "HTML సోర్స్‌ను క్లిప్‌బోర్డ్‌కు కాపీ చేయండి",
+                settings_download_btn: "వెబ్‌సైట్ ఫైల్‌ను డౌన్‌లోడ్ చేయండి",
+                settings_key_info: "API కీ సమాచారం",
+                settings_key_desc: "అన్ని AI ఫంక్షన్‌లు **జెమిని API** ద్వారా శక్తివంతం చేయబడతాయి. కీని కాన్వాస్ పర్యావరణం ద్వారా సురక్షితంగా నిర్వహించబడుతుంది.",
+                settings_close: "ఇంటర్‌ఫేస్ మూసివేయండి"
+            }
+        };
+
+        function switchLanguage(lang) {
+            const data = languageData[lang] || languageData['en'];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (data[key]) {
+                    element.textContent = data[key];
                 }
             });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (data[key]) {
+                    element.placeholder = data[key];
+                }
+            });
+            // Update document title
+            document.title = data.title;
+        }
+
+        // Initialize with English on load
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage('en');
         });
+
+        // ----------------------------------------------------------------------------
+        // 5. LLM Feature: IDEA MATRIX BRAINSTORM (View 2)
+        // ----------------------------------------------------------------------------
+
+        async function handleBrainstorm(event) {
+            event.preventDefault();
+            const inputElement = document.getElementById('brainstorm-input');
+            const outputDiv = document.getElementById('brainstorm-output');
+            const statusP = document.getElementById('brainstorm-status');
+            const userQuery = inputElement.value;
+
+            if (!userQuery) return;
+
+            statusP.textContent = 'Executing Neural Injection... Standby...';
+            outputDiv.innerHTML = '';
+
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            const systemPrompt = `You are a creative idea generation matrix. Based on the user's topic, you must generate a list of exactly three highly creative, divergent, and unique concepts. The output must be a valid JSON array of objects, where each object has a key 'idea' with the concept description. Do not include any text outside the JSON block.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                "idea": { "type": "STRING" }
+                            },
+                            propertyOrdering: ["idea"]
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const ideas = JSON.parse(jsonText);
+                    let html = '<ol class="list-decimal pl-5 space-y-4">';
+                    ideas.forEach((item, index) => {
+                        html += `<li class="text-lg text-white/90">${item.idea}</li>`;
+                    });
+                    html += '</ol>';
+                    outputDiv.innerHTML = html;
+                    statusP.textContent = 'Generation Complete. Concepts Deployed.';
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Brainstorm API Error:", error);
+                statusP.textContent = `[ERROR]: Neural Injection Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
+            }
+        }
+
+        // ----------------------------------------------------------------------------
+        // 6. LLM Feature: CORE COMMAND CENTER (View 3)
+        // ----------------------------------------------------------------------------
+
+        let lastQueryText = ""; // Stores text for TTS
+
+        async function handleCommandCenter(event) {
+            event.preventDefault();
+            const form = document.getElementById('query-form');
+            const textInput = document.getElementById('query-input-text');
+            const imageInput = document.getElementById('query-input-image');
+            const mode = form.querySelector('input[name="query_mode"]:checked').value;
+            const outputDiv = document.getElementById('query-output');
+            const statusP = document.getElementById('query-status');
+            const ttsControls = document.getElementById('tts-controls');
+
+            const userQuery = textInput.value;
+            const imageFile = imageInput.files[0];
+
+            if (!userQuery && !imageFile) return;
+
+            statusP.textContent = 'Executing Command... Standby...';
+            outputDiv.innerHTML = '';
+            ttsControls.classList.add('hidden');
+            lastQueryText = "";
+
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            let systemPrompt = "";
+            let tools = undefined;
+
+            if (mode === 'code') {
+                systemPrompt = "You are a specialized code generation engine. When generating code, you MUST only output the code block using standard markdown syntax (e.g., ```python\n...\n```). Do not include any conversational text, explanations, or citations outside of the code block.";
+            } else { // general/grounded search
+                systemPrompt = "You are an advanced factual analysis engine. Provide a concise and accurate response to the user's query. If the query is a simple factual question, use Google Search for grounding.";
+                if (!imageFile) {
+                     tools = [{ "google_search": {} }]; // Use grounding only for text-only factual queries
+                }
+            }
+
+            const contents = [];
+            let parts = [{ text: userQuery }];
+
+            if (imageFile) {
+                try {
+                    const base64Image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imageFile);
+                    });
+                    parts.push({
+                        inlineData: {
+                            mimeType: imageFile.type,
+                            data: base64Image
+                        }
+                    });
+                } catch (e) {
+                    console.error("Image loading failed:", e);
+                    statusP.textContent = 'Error: Could not process image file.';
+                    return;
+                }
+            }
+
+            contents.push({ role: "user", parts: parts });
+
+            const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                tools: tools
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                const text = candidate?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    outputDiv.innerHTML = markdownToHtml(text);
+                    lastQueryText = text;
+
+                    // Handle Grounding Sources (if used)
+                    const groundingMetadata = candidate?.groundingMetadata;
+                    let sources = [];
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attribution => ({
+                                uri: attribution.web?.uri,
+                                title: attribution.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
+                    }
+
+                    if (sources.length > 0) {
+                        let sourceHtml = `<h4 class="text-lg font-bold mt-6 mb-2 text-neon-teal" data-i18n="query_citation_header">${languageData[document.getElementById('language-select').value].query_citation_header}</h4><ul class="list-disc pl-5 text-sm space-y-1 text-white/70">`;
+                        sources.forEach(s => {
+                            sourceHtml += `<li><a href="${s.uri}" target="_blank" class="hover:underline text-neon-teal/80">${s.title}</a></li>`;
+                        });
+                        sourceHtml += '</ul>';
+                        outputDiv.innerHTML += sourceHtml;
+                    }
+
+                    statusP.textContent = 'Command Executed. Results Deployed.';
+                    ttsControls.classList.remove('hidden');
+
+                } else {
+                    throw new Error("Invalid response structure or empty content.");
+                }
+
+            } catch (error) {
+                console.error("Command Center API Error:", error);
+                statusP.textContent = `[ERROR]: Command Execution Failed. Check console for details. (${error.message})`;
+                outputDiv.innerHTML = `<p class="text-red-500">Processing Error. System stability compromised.</p>`;
+            }
+        }
+
+        // Simple markdown to HTML conversion for output styling
+        function markdownToHtml(markdown) {
+            // Replace **bold** with <strong>
+            let html = markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Replace *italic* with <em>
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Basic line breaks
+            html = html.replace(/\n/g, '<br>');
+
+            // Handle code blocks (simple approximation)
+            html = html.replace(/```(\w+)?\n([\s\S]*?)\n```/g, (match, p1, p2) => {
+                const language = p1 || 'plaintext';
+                // Use <pre> and <code> for code display, applying Tailwind styling
+                return `<pre class="bg-gray-900 p-4 rounded-md overflow-x-auto text-sm text-green-400 mt-4 mb-4"><code>${p2.trim()}</code></pre>`;
+            });
+
+            return html;
+        }
+
+        // ----------------------------------------------------------------------------
+        // 7. LLM Feature: TEXT-TO-SPEECH (TTS)
+        // ----------------------------------------------------------------------------
+
+        async function handleTTS() {
+            if (!lastQueryText) {
+                console.error("No text available for TTS.");
+                return;
+            }
+
+            const ttsButton = document.getElementById('tts-button');
+            const audioPlayer = document.getElementById('tts-audio');
+            const originalButtonText = ttsButton.querySelector('span').textContent;
+
+            ttsButton.disabled = true;
+            ttsButton.querySelector('span').textContent = 'Generating Audio...';
+            audioPlayer.classList.add('hidden');
+            audioPlayer.pause();
+            audioPlayer.removeAttribute('src');
+
+            const apiUrl = `${API_BASE_URL}/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+            const voice = "Kore"; // Choosing a firm, clear voice
+
+            const payload = {
+                contents: [{ parts: [{ text: lastQueryText }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voice }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType; // Should be audio/L16;rate=24000
+
+                if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
+                    const match = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = match ? parseInt(match[1], 10) : 24000;
+
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+
+                    audioPlayer.setAttribute('src', audioUrl);
+                    audioPlayer.classList.remove('hidden');
+                    audioPlayer.play();
+                    ttsButton.querySelector('span').textContent = 'Playing...';
+
+                    // Reset button after playing
+                    audioPlayer.onended = () => {
+                        ttsButton.disabled = false;
+                        ttsButton.querySelector('span').textContent = originalButtonText;
+                    };
+
+                } else {
+                    throw new Error("Invalid TTS response format or missing audio data.");
+                }
+
+            } catch (error) {
+                console.error("TTS API Error:", error);
+                ttsButton.querySelector('span').textContent = 'TTS Error!';
+            } finally {
+                // Ensure button resets if an error occurs before playback starts
+                if (!audioPlayer.src) {
+                    ttsButton.disabled = false;
+                    ttsButton.querySelector('span').textContent = originalButtonText;
+                }
+            }
+        }
+
+        // ----------------------------------------------------------------------------
+        // 8. SETTINGS UTILITIES
+        // ----------------------------------------------------------------------------
+
+        function copySourceCode() {
+            const htmlSource = document.documentElement.outerHTML;
+            const btnText = document.getElementById('copy-btn-text');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(htmlSource)
+                    .then(() => {
+                        btnText.textContent = 'COPIED! CODE IN CLIPBOARD.';
+                        setTimeout(() => switchLanguage(document.getElementById('language-select').value), 2000);
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                        // Fallback for environments where clipboard API is restricted
+                        const tempTextArea = document.createElement('textarea');
+                        tempTextArea.value = htmlSource;
+                        document.body.appendChild(tempTextArea);
+                        tempTextArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempTextArea);
+                        btnText.textContent = 'COPIED! (Fallback Used)';
+                        setTimeout(() => switchLanguage(document.getElementById('language-select').value), 2000);
+                    });
+            } else {
+                btnText.textContent = 'Manual Copy Required: Navigator not supported.';
+                console.warn('Clipboard API not available. Manual copy is required.');
+            }
+        }
+
+        /**
+         * Downloads the complete HTML source of the application as an index.html file.
+         */
+        function downloadSourceCode() {
+            const htmlSource = document.documentElement.outerHTML;
+            const filename = 'cyberspace_ai_hub.html';
+            // Create a Blob containing the HTML source
+            const blob = new Blob([htmlSource], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            // Create a temporary anchor element to trigger the download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+
+            // Clean up the temporary element and revoke the object URL
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
     </script>
 </body>
 </html>
-
